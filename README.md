@@ -48,6 +48,7 @@ PDF naming convention: `YYYY_FirstAuthor_Short-Title.pdf`
 
 | Paper | Venue | Key finding |
 |---|---|---|
+| van de Ven, Tuytelaars & Tolias (2022), *Three types of incremental learning* | Nature Machine Intelligence | Defines the three continual-learning scenarios (task-, domain- and class-incremental) and compares methods on Split MNIST and Split CIFAR-100. Class-incremental is by far the hardest: regularisation methods such as EWC and SI fail there, while replay-based methods hold up. KU Leuven. [Code](https://github.com/GMvandeVen/continual-learning) |
 | Shi et al. (2025), *Continual Learning of Large Language Models: A Comprehensive Survey* | ACM Computing Surveys | Overview of continual pre-training, fine-tuning and alignment for LLMs |
 | Dohare et al. (2024), *Loss of plasticity in deep continual learning* | Nature | Networks trained continually gradually lose the ability to learn; "continual backprop" (re-initialising little-used units) fixes it. [Code](https://github.com/shibhansh/loss-of-plasticity) |
 | Lin et al. (2025), *Continual Learning via Sparse Memory Finetuning* | Meta FAIR, arXiv 2510.15103 | Only updates memory slots specific to the new knowledge. NaturalQuestions F1 drops 89% with full fine-tuning, 71% with LoRA, 11% with this method |
