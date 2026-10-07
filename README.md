@@ -39,9 +39,9 @@ PDF naming convention: `YYYY_FirstAuthor_Short-Title.pdf`
 | Steyvers et al. (2025), *What large language models know and what people think they know* | Nature Machine Intelligence | "Calibration gap": users overestimate LLM accuracy, and longer explanations increase confidence without increasing accuracy |
 | Becker et al. (2025), *Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity* | METR, arXiv 2507.09089 | RCT: developers were 19% slower with AI, while believing they were 20% faster |
 | Fang et al. (2025), *How AI and Human Behaviors Shape Psychosocial Effects of Chatbot Use: A Longitudinal RCT* | OpenAI × MIT Media Lab | 4-week RCT (n=981) comparing voice and text; heavier use is associated with more loneliness and emotional dependence |
+| Aka, Palikot, Ansari & Yazdani (2025), *Quantifying the Benefits of AI-Assisted Recruitment* (earlier title: *Better Together*) | arXiv 2507.08029 | Two field experiments: candidates shortlisted using AI interview reports pass the final human interview at a rate 17.5–20 percentage points higher than those shortlisted from resumes alone. Gains are largest for junior candidates, but 75% of invited applicants don't complete the AI interview |
 
 **Links:**
-- Aka et al. (2025), *Better Together: Quantifying the Benefits of AI-Assisted Recruitment*: https://arxiv.org/abs/2507.08029
 - Tavus **Griffin** (announced 1 Oct 2026), a real-time, face-to-face video "Human Interaction Model". In Tavus's blind test, 48% of participants thought it was a real person. Press release: https://www.businesswire.com/news/home/20261001092598/en/ · demo video: https://www.youtube.com/watch?v=VcQcRRHJTyc
 
 ### Continual Learning (`papers/continual-learning/`)
