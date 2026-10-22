@@ -1,0 +1,24 @@
+Texas Hold'em is played with a standard 52-card deck: four suits (♠ ♥ ♦ ♣), each with 13 ranks from 2 up to 10, then jack, queen, king and ace.
+
+Each player is dealt two private cards (hole cards). Five shared cards (the board) are dealt face up in three stages: three at once (the flop), then one (the turn), then one (the river). There is a round of betting before the flop and after each stage. In each round, players may check, bet, call, raise or fold. A player who folds gives up the hand and any money already in the pot.
+
+If more than one player remains after the last betting round, there is a showdown. Each player makes the best possible five-card hand from their two hole cards and the five board cards, using both, one or none of their hole cards. The best hand wins the pot; identical hands split it. Suits have no rank.
+
+Hands rank from best to worst:
+1. Straight flush: five consecutive ranks, all of the same suit.
+2. Four of a kind: four cards of the same rank.
+3. Full house: three of a kind plus a pair.
+4. Flush: five cards of the same suit, not consecutive.
+5. Straight: five consecutive ranks in mixed suits.
+6. Three of a kind: three cards of the same rank.
+7. Two pair.
+8. One pair.
+9. High card.
+
+An ace can count as the highest card (10-J-Q-K-A) or the lowest (A-2-3-4-5), but a straight cannot wrap around: Q-K-A-2-3 is not a straight. When two hands are in the same category, the higher ranks win, and then the remaining cards (kickers) decide.
+
+To decide whether to call a bet while cards are still to come, count your outs: the unseen cards that would give you the winning hand. With one card to come, your chance of winning is roughly outs × 2%; with two cards to come, roughly outs × 4%. Compare this with your pot odds, the share of the final pot you would be putting in:
+
+> Required chance of winning = amount to call ÷ (pot before the bet + the bet + your call).
+
+Call if your chance of winning is higher than this; otherwise fold.

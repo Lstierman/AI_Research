@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Survey Dashboard</title>
+  <link rel="stylesheet" href="/common/base.css" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="top">
+    <h1>Survey Dashboard</h1>
+    <div class="toolbar">
+      <label class="check"><input type="checkbox" id="include-incomplete" /> Include unfinished surveys</label>
+      <button class="secondary" id="refresh">Refresh</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="notices"></div>
+
+    <section class="kpis" id="kpis"></section>
+
+    <section>
+      <div class="section-head">
+        <h2>Export</h2>
+        <p class="muted small">Long format: one row per participant × case × question. Respects the "include unfinished" toggle.</p>
+      </div>
+      <div class="exports" id="exports"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Counterbalancing</h2>
+        <p class="muted small" id="balance-note"></p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>The 36 combinations: case × explanation version</h3>
+          <p class="muted small" id="cells-note"></p>
+          <div class="table-wrap" id="cells"></div>
+        </div>
+        <div class="card">
+          <h3>Assignment sets (24)</h3>
+          <p class="muted small">Each participant sees 6 of the 36 combinations: every case once, every modality twice (once correct, once flawed), and one error on an easy, a medium and a hard question. There are 24 such sets, and new participants get the set with the fewest finished + in-progress surveys. Each block of 24 participants therefore fills every one of the 36 combinations exactly 4 times. Hover a tile to see what's in it.</p>
+          <div class="conditions" id="conditions"></div>
+          <div class="legend small" id="conditions-legend"></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Results</h2>
+        <p class="muted small">Proportions with 95% Wilson intervals in the tooltip. Hover a bar for details.</p>
+      </div>
+      <div class="grid-2">
+        <div class="card chart-card">
+          <h3>Flaw adoption by modality</h3>
+          <p class="muted small">Share of flawed explanations where the participant picked the answer the error leads to (on the targeted question).</p>
+          <div id="chart-adoption"></div>
+        </div>
+        <div class="card chart-card">
+          <h3>Flaw adoption by targeted question and modality</h3>
+          <p class="muted small">Is an error on a harder question adopted more often?</p>
+          <div id="chart-adoption-diff"></div>
+        </div>
+        <div class="card chart-card">
+          <h3>Targeted question: correct after correct vs. flawed explanation</h3>
+          <p class="muted small">How much the error lowers accuracy, by the difficulty of the targeted question.</p>
+          <div id="chart-target"></div>
+        </div>
+        <div class="card chart-card">
+          <h3>Accuracy on all questions by modality</h3>
+          <p class="muted small">After correct vs. flawed explanations. Correct explanations show whether people can learn from each modality at all.</p>
+          <div id="chart-accuracy"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Per case</h3>
+        <div class="table-wrap" id="per-case"></div>
+      </div>
+      <div class="card">
+        <h3>Accuracy by question difficulty and modality</h3>
+        <div class="table-wrap" id="per-difficulty"></div>
+      </div>
+      <div class="card">
+        <h3>Confidence by modality</h3>
+        <p class="muted small">Mean confidence on the 1–5 scale (1 = not sure at all, 5 = completely sure). Hover a cell for n. Confident but wrong, especially when adopting the flaw, suggests overreliance.</p>
+        <div class="table-wrap" id="confidence"></div>
+      </div>
+      <div class="card">
+        <h3>Exposure by modality</h3>
+        <div class="table-wrap" id="exposure"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Surveys</h2>
+        <div class="toolbar">
+          <button class="danger" id="delete-simulated">Delete simulated</button>
+          <button class="danger" id="delete-demo">Delete demo</button>
+          <button class="danger" id="delete-incomplete">Delete unfinished</button>
+        </div>
+      </div>
+      <div class="card table-wrap" id="surveys"></div>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>Cases &amp; stimuli</h2>
+        <p class="muted small">Files found in the <code>cases/</code> folders.</p>
+      </div>
+      <div class="card table-wrap" id="stimuli"></div>
+    </section>
+  </main>
+
+  <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+  <script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+PLACEHOLDER: flawed textual explanation for case 3 (the error leads to a wrong answer on the medium question).
+
+Replace this file with the generated text. Blank lines separate paragraphs.

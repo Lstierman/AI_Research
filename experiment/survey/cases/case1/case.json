@@ -1,0 +1,23 @@
+{
+  "title": "Poker: Texas Hold'em",
+  "context": "You have the time to read this explanation. Afterwards you will get 3 questions about the topic. YOU WILL NOT BE ABLE TO GO BACK TO THE EXPLANATION!",
+  "flawedQuestion": "easy",
+  "questions": {
+    "easy": {
+      "prompt": "Your hand: 9♥ 4♥ \nOpponent's hand: 10♣ J♦ \nBoard: 7♥ 8♠ 9♣ Q♥ 2♥ \nOn the river, the pot is €200 and the opponent goes all-in for €150. \nKnowing both hands, do you call or fold?",
+      "options": { "A": "Call", "B": "Fold"},
+      "correct": "A",
+      "flawedAnswer": "B"
+    },
+    "medium": {
+      "prompt": "Your hand: A♣ 3♦ \nOpponent's hand: K♠ K♥ \nBoard: 2♥ 4♣ 5♠ K♦ 9♣ \nOn the river, the pot is €200 and the opponent goes all-in for €150. \nKnowing both hands, do you call or fold?",
+      "options": { "A": "Call", "B": "Fold"},
+      "correct": "A"
+    },
+    "hard": {
+      "prompt": "Your hand: A♥ J♥ \nOpponent's hand: K♣ K♠ \nBoard after the turn: K♥ 7♥ 2♣ 4♦ \nOne card, the river, is still to come. The pot is €100 and the opponent bets €50. Knowing both hands, do you call or fold?",
+      "options": { "A": "Call", "B": "Fold"},
+      "correct": "B"
+    }
+  }
+}

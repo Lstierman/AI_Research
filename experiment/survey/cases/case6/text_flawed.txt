@@ -1,0 +1,3 @@
+PLACEHOLDER: flawed textual explanation for case 6 (the error leads to a wrong answer on the hard question).
+
+Replace this file with the generated text. Blank lines separate paragraphs.

@@ -1,0 +1,23 @@
+{
+  "title": "Placeholder case 5",
+  "context": "PLACEHOLDER: short description of the situation, shown above the explanation and again above the questions.",
+  "flawedQuestion": "hard",
+  "questions": {
+    "easy": {
+      "prompt": "PLACEHOLDER: easy question for case 5?",
+      "options": { "A": "Option A", "B": "Option B", "C": "Option C", "D": "Option D" },
+      "correct": "A"
+    },
+    "medium": {
+      "prompt": "PLACEHOLDER: medium question for case 5?",
+      "options": { "A": "Option A", "B": "Option B", "C": "Option C", "D": "Option D" },
+      "correct": "B"
+    },
+    "hard": {
+      "prompt": "PLACEHOLDER: hard question for case 5?",
+      "options": { "A": "Option A", "B": "Option B", "C": "Option C", "D": "Option D" },
+      "correct": "C",
+      "flawedAnswer": "D"
+    }
+  }
+}

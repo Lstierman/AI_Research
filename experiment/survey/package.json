@@ -1,0 +1,20 @@
+{
+  "name": "ai-explanations-survey",
+  "version": "1.0.0",
+  "description": "Survey on learning from flawed AI explanations: participant frontend (3000) + researcher dashboard (3001)",
+  "main": "start.js",
+  "scripts": {
+    "start": "node start.js",
+    "participant": "node participant/server.js",
+    "dashboard": "node dashboard/server.js",
+    "simulate": "node scripts/simulate.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "express": "^4.22.3"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}
