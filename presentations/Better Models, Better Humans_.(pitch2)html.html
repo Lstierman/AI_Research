@@ -1,0 +1,427 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Better Models, Better Humans?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one 1280×720 stage scaled to fit; modality ladder (text → voice → face) is the recurring visual spine */
+:root{
+  --bg:#EEF0EC; --stage:#FAFBF8; --ink:#15181C; --muted:#5D6460; --line:#D5D9D3;
+  --text-c:#3E5C8A; --voice-c:#1F7A6D; --face-c:#B86E14; --err:#C7323B; --err-soft:#F7DEDF;
+  --chip:#E6E9E3;
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1012; --stage:#171A1D; --ink:#ECEEEA; --muted:#9AA19C; --line:#2C3135;
+  --text-c:#8FB0E3; --voice-c:#5CC4B2; --face-c:#E9A54B; --err:#F06A70; --err-soft:#3A1E21; --chip:#22262A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1012; --stage:#171A1D; --ink:#ECEEEA; --muted:#9AA19C; --line:#2C3135;
+  --text-c:#8FB0E3; --voice-c:#5CC4B2; --face-c:#E9A54B; --err:#F06A70; --err-soft:#3A1E21; --chip:#22262A; color-scheme:dark}
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;box-sizing:border-box}
+#viewport{position:relative;width:100%;height:100%}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;
+  background:var(--stage);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.slide{position:absolute;inset:0;padding:64px 80px 72px;display:flex;flex-direction:column;gap:28px;
+  opacity:0;pointer-events:none;transition:opacity .35s ease}
+.slide.active{opacity:1;pointer-events:auto}
+@media (prefers-reduced-motion: reduce){.slide{transition:none}}
+
+.eyebrow{font-family:var(--f-mono);font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1,h2{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.02em}
+h1{font-size:104px;line-height:.95;font-weight:800}
+h2{font-size:52px;line-height:1.05;font-weight:700}
+p{margin:0}
+.lead{font-size:26px;line-height:1.4;max-width:30em;color:var(--ink)}
+.small{font-size:19px;line-height:1.45;color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.t{color:var(--text-c)} .v{color:var(--voice-c)} .fc{color:var(--face-c)} .e{color:var(--err)}
+
+/* footer chrome */
+#chrome{position:absolute;left:80px;right:80px;bottom:26px;display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--f-mono);font-size:13px;color:var(--muted);z-index:5}
+#progress{position:absolute;left:0;bottom:0;height:4px;background:var(--ink);transition:width .35s ease;z-index:5}
+
+/* ladder */
+.ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:end}
+.rung{border-top:6px solid currentColor;padding-top:18px;display:flex;flex-direction:column;gap:10px}
+.rung h3{margin:0;font-family:var(--f-display);font-size:34px;font-weight:700;color:var(--ink)}
+.rung p{font-size:19px;line-height:1.4;color:var(--muted)}
+.rung svg{width:84px;height:84px}
+.r1{height:220px}.r2{height:270px}.r3{height:320px}
+.rung{justify-content:flex-start}
+
+/* title slide */
+.title-wrap{display:grid;grid-template-columns:1.35fr 1fr;gap:48px;align-items:center;flex:1}
+.title-icons{display:flex;flex-direction:column;gap:22px}
+.ti{display:flex;align-items:center;gap:20px;font-family:var(--f-mono);font-size:18px}
+.ti svg{width:64px;height:64px;flex:none}
+.ti .arrow{color:var(--muted)}
+
+/* cards */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.hyp{border:1px solid var(--line);border-radius:4px;padding:24px;display:flex;flex-direction:column;gap:12px;background:var(--stage)}
+.hyp .tag{font-family:var(--f-mono);font-size:15px;color:var(--muted)}
+.hyp h4{margin:0;font-family:var(--f-display);font-size:27px;line-height:1.15;font-weight:600}
+.hyp p{font-size:18px;line-height:1.45;color:var(--muted)}
+
+/* trial */
+.trial{display:flex;align-items:stretch;gap:20px}
+.box{border:1.5px solid var(--ink);border-radius:4px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.box.expl{flex:1.3}
+.box h4{margin:0;font-family:var(--f-display);font-size:26px}
+.qs{display:flex;flex-direction:column;gap:12px;flex:1}
+.q{border:1px solid var(--line);border-radius:4px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;font-size:20px;background:var(--chip)}
+.q .lvl{font-family:var(--f-mono);font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.arrowcol{display:flex;align-items:center;font-size:36px;color:var(--muted)}
+.chips{display:flex;gap:10px;flex-wrap:wrap}
+.chip{font-family:var(--f-mono);font-size:15px;padding:6px 12px;border-radius:999px;border:1.5px solid currentColor}
+
+/* error map */
+.emap{border-collapse:collapse;font-size:19px}
+.emap th,.emap td{border:1px solid var(--line);padding:0;text-align:center}
+.emap th{font-family:var(--f-mono);font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:10px 18px}
+.emap td.lbl{text-align:left;padding:10px 18px;font-family:var(--f-mono);font-size:16px;white-space:nowrap}
+.emap td.c{width:120px;height:52px}
+.emap td.hit{background:var(--err-soft);color:var(--err);font-family:var(--f-mono);font-weight:500}
+.emap td.ok{color:var(--muted)}
+.split{display:grid;grid-template-columns:auto 1fr;gap:56px;align-items:start}
+.legend{display:flex;flex-direction:column;gap:18px}
+.legend .row{display:flex;gap:14px;align-items:flex-start;font-size:20px;line-height:1.4}
+.sw{width:22px;height:22px;border-radius:3px;flex:none;margin-top:4px;border:1px solid var(--line)}
+
+/* flow */
+.flow{display:flex;align-items:center;gap:0}
+.step{flex:none;padding:18px 22px;border:1.5px solid var(--ink);border-radius:4px;font-size:20px;background:var(--stage)}
+.step.big{flex:1;display:flex;flex-direction:column;gap:12px}
+.step.dim{border-style:dashed}
+.conn{width:34px;height:2px;background:var(--ink);flex:none}
+.mini{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.mini div{border:1px solid var(--line);border-radius:3px;padding:8px 6px;font-family:var(--f-mono);font-size:13px;text-align:center;background:var(--chip)}
+
+/* debrief */
+.qlist{display:flex;flex-direction:column;gap:14px}
+.qitem{display:flex;gap:18px;align-items:baseline;font-size:24px;line-height:1.35;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.qitem .k{font-family:var(--f-mono);font-size:15px;color:var(--muted);flex:none;width:96px}
+.why{background:var(--chip);border-radius:4px;padding:22px 24px;font-size:20px;line-height:1.45}
+
+/* measures */
+.mtable{display:grid;grid-template-columns:repeat(2,1fr);gap:22px 40px}
+.m{display:flex;flex-direction:column;gap:6px;border-left:3px solid var(--ink);padding-left:18px}
+.m b{font-family:var(--f-display);font-size:26px;font-weight:600}
+.m span{font-size:18px;color:var(--muted);line-height:1.4}
+
+/* demo */
+.demo{flex:1;display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:center}
+.live{display:flex;align-items:center;gap:16px;font-family:var(--f-mono);font-size:18px;color:var(--err);letter-spacing:.1em;text-transform:uppercase}
+.dot{width:16px;height:16px;border-radius:50%;background:var(--err);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion: reduce){.dot{animation:none}}
+.checklist{display:flex;flex-direction:column;gap:16px}
+.checklist div{display:flex;gap:16px;align-items:baseline;font-size:22px;line-height:1.35}
+.checklist .n{font-family:var(--f-mono);font-size:15px;color:var(--muted);width:28px;flex:none}
+.demo-right{display:flex;flex-direction:column;gap:28px}
+.demo-right .why{font-size:19px}
+
+/* sources + related work */
+.src{font-family:var(--f-mono);font-size:13px;color:var(--muted);line-height:1.4}
+.lit{display:flex;flex-direction:column}
+.lit .row{display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:baseline;padding:13px 0;border-bottom:1px solid var(--line);font-size:21px;line-height:1.35}
+.lit .row .src{font-size:14px}
+.gap{border-left:6px solid var(--err);background:var(--chip);padding:16px 22px;font-size:20px;line-height:1.45;border-radius:0 4px 4px 0}
+
+/* design: parts */
+.parts{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.part{border-top:6px solid currentColor;padding-top:14px;display:flex;flex-direction:column;gap:10px}
+.part h4{margin:0 0 4px;font-family:var(--f-display);font-size:26px;color:var(--ink)}
+.case{border:1px solid var(--line);border-radius:4px;padding:11px 16px;font-size:18px;background:var(--chip);color:var(--ink);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.case.flawed{background:var(--err-soft);border-color:var(--err)}
+.case .lvl{font-family:var(--f-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.case.flawed .lvl{color:var(--err)}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:14px 40px}
+.rules div{display:flex;gap:16px;align-items:baseline;font-size:19px;line-height:1.4}
+.rules .k{font-family:var(--f-mono);font-size:14px;color:var(--muted);flex:none;width:96px}
+
+/* feasibility */
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:56px;flex:1}
+.twocol h3{margin:0 0 16px;font-family:var(--f-mono);font-size:15px;font-weight:500;letter-spacing:.12em;text-transform:uppercase}
+.plain{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px}
+.plain li{font-size:20px;line-height:1.4;padding-left:22px;position:relative}
+.plain li::before{content:"";position:absolute;left:0;top:.6em;width:10px;height:2px;background:currentColor}
+
+/* authors */
+.authors{display:flex;flex-wrap:wrap;gap:8px 28px;font-family:var(--f-mono);font-size:18px;color:var(--muted);padding-top:20px;border-top:1px solid var(--line)}
+
+/* notes + controls */
+#notes{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));width:min(900px,calc(100% - 32px));
+  background:var(--ink);color:var(--stage);font-size:15px;line-height:1.5;padding:14px 18px;border-radius:6px;z-index:20;box-sizing:border-box}
+#notes .tm{font-family:var(--f-mono);font-size:12px;opacity:.7;margin-bottom:4px;display:block}
+#controls{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(12px + env(safe-area-inset-top,0px));display:flex;gap:8px;z-index:20}
+#controls button{font-family:var(--f-mono);font-size:12px;background:var(--stage);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;opacity:.55}
+#controls button:hover,#controls button:focus-visible{opacity:1}
+button:focus-visible{outline:2px solid var(--text-c);outline-offset:2px}
+.navzone{position:absolute;top:0;bottom:0;width:18%;z-index:4;cursor:pointer}
+.navzone.l{left:0}.navzone.r{right:0}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-text" viewBox="0 0 64 64"><rect x="6" y="10" width="52" height="40" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M15 22h34M15 30h34M15 38h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-voice" viewBox="0 0 64 64"><path d="M8 32v0M16 24v16M24 14v36M32 20v24M40 8v48M48 22v20M56 29v6" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-face" viewBox="0 0 64 64"><circle cx="32" cy="30" r="20" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="25" cy="27" r="2.6" fill="currentColor"/><circle cx="39" cy="27" r="2.6" fill="currentColor"/><path d="M24 37q8 6 16 0" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 58q14-8 28 0" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<div id="viewport">
+<div id="stage" role="region" aria-roledescription="slide deck" aria-label="Better Models, Better Humans?">
+
+<!-- 1 Title -->
+<section class="slide" data-time="0:00 – 0:30" data-notes="HENRI · Introduce the group (Leander, Lin, Henri). Last time: the question. Today: how we test it, what we measure, why it's feasible, and a live demo at the end.">
+  <div class="eyebrow">Research proposal · Human–AI interaction</div>
+  <div class="title-wrap">
+    <div style="display:flex;flex-direction:column;gap:28px">
+      <h1 style="font-size:88px">Better models,<br>better humans?</h1>
+      <p class="lead">More human-like does not automatically mean more helpful.</p>
+      <div class="authors"><span>Leander Stierman</span><span>Lin Kengjian</span><span>Henri Lemahieu</span></div>
+    </div>
+    <div class="title-icons" aria-label="Text, then voice, then face-to-face AI">
+      <div class="ti t"><svg><use href="#i-text"/></svg><span>Text</span></div>
+      <div class="ti arrow">↓</div>
+      <div class="ti v"><svg><use href="#i-voice"/></svg><span>AI voice</span></div>
+      <div class="ti arrow">↓</div>
+      <div class="ti fc"><svg><use href="#i-face"/></svg><span>AI voice + face</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 Motivation -->
+<section class="slide" data-time="0:30 – 1:45" data-notes="HENRI · Hook: the video-call story (one wrong step, would you notice?). Ladder: chat → voice → avatars. Tavus: 26 of 54 thought the avatar was human (company-reported). Trust only helps if it matches quality. Who cares: interface designers, anyone learning from AI.">
+  <div class="eyebrow">Why this matters</div>
+  <h2>AI is climbing a ladder of human-likeness</h2>
+  <div class="ladder" style="flex:1">
+    <div class="rung r1 t"><svg><use href="#i-text"/></svg><h3>Text</h3><p>Read at your own pace. Easy to re-check a sentence.</p></div>
+    <div class="rung r2 v"><svg><use href="#i-voice"/></svg><h3>Voice</h3><p>Feels like a person talking. Passes once, harder to re-check.</p></div>
+    <div class="rung r3 fc"><svg><use href="#i-face"/></svg><h3>Face-to-face</h3><p>Eye contact and expression add social cues. <b style="color:var(--ink)">Oct 2026: 26 of 54 people on a one-minute video call thought an AI avatar was human.</b></p></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;align-items:baseline;gap:32px">
+    <p class="small">Each step feels more natural. Does it also make people <b style="color:var(--ink)">accept errors more easily</b>?</p>
+    <span class="src" style="flex:none">Tavus Research, “Griffin”, 1 Oct 2026 (self-reported)</span>
+  </div>
+</section>
+
+<!-- 3 Related work -->
+<section class="slide" data-time="1:45 – 3:00" data-notes="HENRI · Four findings, name each source once and move on: Vaccaro (teams worse on average), Bansal (explanations raise acceptance, also when wrong), Buçinca (forcing thinking helps, users dislike it), Reeves & Nass + Schroeder & Epley (social actors, voice sounds more competent). Gap: almost all text-only.">
+  <div class="eyebrow">What we already know</div>
+  <h2>Explanations persuade, and a voice persuades more</h2>
+  <div class="lit">
+    <div class="row"><span>On average, human + AI teams do worse than the best of the two alone, especially on decisions.</span><span class="src">Vaccaro, Almaatouq &amp; Malone, Nature Hum. Behav. 2024 · meta-analysis, 106 experiments</span></div>
+    <div class="row"><span>Explanations make people accept AI advice more, also when the AI is wrong.</span><span class="src">Bansal et al., CHI 2021</span></div>
+    <div class="row"><span>Making people think first reduces over-reliance, but users like that design least.</span><span class="src">Buçinca, Malaya &amp; Gajos, CSCW 2021</span></div>
+    <div class="row"><span>People treat computers as social actors, and the same words sound more competent when spoken.</span><span class="src">Reeves &amp; Nass 1996 · Schroeder &amp; Epley, Psych. Science 2015</span></div>
+  </div>
+  <div class="gap"><b>The gap:</b> this work is almost all text. Few studies deliver the <i>same</i> explanation as text, voice and face, and measure whether people take over its mistakes.</div>
+</section>
+
+<!-- 4 Question & hypotheses -->
+<section class="slide" data-time="3:00 – 4:00" data-notes="HENRI · Read the question. Three expectations: more trust, more flaws adopted (main one), bigger effect on harder questions. Also calibration, self-reported checking, preference. Two-sided: the opposite result is a finding too.">
+  <div class="eyebrow">Research question</div>
+  <h2>When people learn from an AI, does a more human-like format make them adopt its mistakes?</h2>
+  <div class="grid3">
+    <div class="hyp"><span class="tag">Trust</span><h4>Voice and face are trusted more</h4><p>Rated right after each explanation, before answering.</p></div>
+    <div class="hyp" style="border-color:var(--err)"><span class="tag e">Main hypothesis · flaw adoption</span><h4>More human-like, more mistakes followed</h4><p>With voice, and even more with a face, more people give the wrong answer the flaw leads to.</p></div>
+    <div class="hyp"><span class="tag">Difficulty</span><h4>Bigger effect on harder questions</h4><p>Checking costs more effort there, so social cues matter more.</p></div>
+  </div>
+  <p class="small">Also measured: does confidence match correctness, do people say they checked, which format do they prefer. All tests are two-sided.</p>
+</section>
+
+<!-- 5 Conditions -->
+<section class="slide" data-time="4:00 – 4:45" data-notes="HENRI · Same words, three formats. Answer last time's question about isolating audio: text streams at speaking speed, replays allowed, voice and video share one audio file → voice vs video isolates the face. Hand over to Leander.">
+  <div class="eyebrow">What we vary</div>
+  <h2>One script, three deliveries</h2>
+  <div class="grid3" style="margin-top:8px">
+    <div class="hyp" style="border-top:6px solid var(--text-c)"><svg class="t" style="width:56px;height:56px"><use href="#i-text"/></svg><h4>Text</h4><p>Chat bubble that streams in at speaking speed, then stays readable.</p></div>
+    <div class="hyp" style="border-top:6px solid var(--voice-c)"><svg class="v" style="width:56px;height:56px"><use href="#i-voice"/></svg><h4>AI voice</h4><p>The same words read by a synthetic voice. Can be replayed.</p></div>
+    <div class="hyp" style="border-top:6px solid var(--face-c)"><svg class="fc" style="width:56px;height:56px"><use href="#i-face"/></svg><h4>AI voice + face</h4><p>The <b style="color:var(--ink)">same audio file</b>, lip-synced onto an AI avatar.</p></div>
+  </div>
+  <p class="lead" style="font-size:24px">Identical words in every condition. <span class="small" style="font-size:24px">Voice vs. face differs only in the face.</span></p>
+</section>
+
+<!-- 6 One case -->
+<section class="slide" data-time="4:45 – 5:45" data-notes="LEANDER · Six cases on unfamiliar topics, so the rules come only from the AI. One case: situation → ~1 min explanation (method, never the answers) → trust → three questions with confidence, calculator logged. 18 answers per person.">
+  <div class="eyebrow">One case</div>
+  <h2>Learn something new, then apply it</h2>
+  <div class="trial">
+    <div class="box" style="flex:.8">
+      <span class="eyebrow">1 · Situation</span>
+      <h4>A short scenario on screen</h4>
+      <p class="small">Game rules, finance, statistics: topics most people don't know well.</p>
+    </div>
+    <div class="arrowcol">→</div>
+    <div class="box expl">
+      <span class="eyebrow">2 · AI explanation</span>
+      <h4>About a minute. Teaches the method, never the answers.</h4>
+      <p class="small">Then: <b style="color:var(--ink)">how much do you trust it?</b></p>
+      <div class="chips" style="margin-top:auto"><span class="chip t">text</span><span class="chip v">voice</span><span class="chip fc">voice + face</span></div>
+    </div>
+    <div class="arrowcol">→</div>
+    <div class="qs">
+      <div class="q"><span>Q1 + confidence</span><span class="lvl">easy</span></div>
+      <div class="q"><span>Q2 + confidence</span><span class="lvl">medium</span></div>
+      <div class="q"><span>Q3 + confidence</span><span class="lvl">hard</span></div>
+      <p class="small mono" style="font-size:15px">built-in calculator, every entry logged</p>
+    </div>
+  </div>
+  <p class="small">6 cases per participant → <b style="color:var(--ink)">18 answers and 6 trust ratings</b>.</p>
+</section>
+
+<!-- 7 Flaws & design -->
+<section class="slide" data-time="5:45 – 7:00" data-notes="LEANDER · Half the explanations hide one subtle flaw. Rules: one sentence differs, same tone, breaks one question, catchable by a novice. Walk through the example participant: one flawed + one correct case per part, one flaw each on easy, medium and hard. No format is tied to a difficulty: it all rotates over 36 conditions. Mistake question only at the end.">
+  <div class="eyebrow">The manipulation</div>
+  <h2>Half the explanations hide one subtle mistake</h2>
+  <div class="parts">
+    <div class="part v"><h4>Part 1 · Voice</h4><div class="case flawed"><span>Case A</span><span class="lvl">flaw on hard Q</span></div><div class="case"><span>Case B</span><span class="lvl">correct</span></div></div>
+    <div class="part t"><h4>Part 2 · Text</h4><div class="case"><span>Case C</span><span class="lvl">correct</span></div><div class="case flawed"><span>Case D</span><span class="lvl">flaw on easy Q</span></div></div>
+    <div class="part fc"><h4>Part 3 · Voice + face</h4><div class="case flawed"><span>Case E</span><span class="lvl">flaw on medium Q</span></div><div class="case"><span>Case F</span><span class="lvl">correct</span></div></div>
+  </div>
+  <div class="rules">
+    <div><span class="k">1 sentence</span><span>Only the flawed sentence differs, said in the same confident tone.</span></div>
+    <div><span class="k">1 question</span><span>The flaw breaks exactly one of the three answers.</span></div>
+    <div><span class="k">catchable</span><span>A beginner can spot it: the AI contradicts itself, or a quick sum doesn't add up.</span></div>
+    <div><span class="k">asked last</span><span>“Was there a mistake?” comes only at the very end.</span></div>
+  </div>
+  <p class="src" style="font-size:15px">One example participant. Format order, which cases are flawed and which question each flaw hits all rotate over 36 conditions, so every format gets flaws on easy, medium and hard questions equally often.</p>
+</section>
+
+<!-- 8 Measures -->
+<section class="slide" data-time="7:00 – 7:45" data-notes="LEANDER · Main outcome: flaw adoption. Accuracy after perfect explanations separates 'harder to learn from' from 'more convincing'. Trust and calibration. Mixed logistic regression, participant and case as random effects.">
+  <div class="eyebrow">What we measure</div>
+  <h2>Do people follow the mistake, and do they know it?</h2>
+  <div class="mtable">
+    <div class="m" style="border-color:var(--err)"><b class="e">Flaw adoption · main outcome</b><span>On the affected question, did they give exactly the wrong answer the flaw leads to?</span></div>
+    <div class="m"><b>Learning from correct explanations</b><span>Is a format simply harder to learn from? That's a different story from more convincing.</span></div>
+    <div class="m"><b>Trust</b><span>Rated right after each explanation, before answering.</span></div>
+    <div class="m"><b>Calibration</b><span>Does confidence match whether the answer is actually correct?</span></div>
+  </div>
+  <p class="small"><span class="mono" style="font-size:16px;color:var(--ink)">Analysis:</span> mixed logistic regression with participant and case as random effects, compared across <b class="t">text</b>, <b class="v">voice</b> and <b class="fc">voice + face</b>.</p>
+</section>
+
+<!-- 9 Feasibility -->
+<section class="slide" data-time="7:45 – 8:30" data-notes="LEANDER · Feasible: 36 participants minimum, ideally 72, 30-min online, one week, app built, 36 stimuli to record. Limits: large effects only (pilot), text can be re-read, one voice and one avatar, mild deception with full debrief.">
+  <div class="eyebrow">Is this feasible?</div>
+  <h2>Small, online, and honest about its limits</h2>
+  <div class="twocol">
+    <div>
+      <h3 class="v">What it takes</h3>
+      <ul class="plain">
+        <li><b>36 participants</b> minimum (one per condition), ideally 72</li>
+        <li>A <b>30-minute online survey</b> on a laptop, collected within one week</li>
+        <li>The <b>survey site already works</b>: demo on the next slide</li>
+        <li>Still to record: 12 scripts × 3 formats = 36 clips (TTS voice + avatar tool)</li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="e">What it can't do</h3>
+      <ul class="plain">
+        <li>Detect only <b>large effects</b>: we present it as an exploratory pilot</li>
+        <li>Text can be re-read, voice can't: <b>voice vs. face</b> is the cleanest comparison</li>
+        <li>One voice and one avatar, so results may depend on them</li>
+        <li>Mild deception: everyone gets a <b>full debrief</b> that corrects every mistake</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 10 Demo -->
+<section class="slide" data-time="8:30 – 9:30" data-notes="LEANDER ·Switch to the survey website and walk through the demo case: the situation, the AI explanation in each format, then the questions. Explain why this is a demo case and not one of the real ones: we'd like classmates and professors to take part, and showing the real cases now would give the mistakes away. Anyone who saw this pitch already knows how the survey works, so their responses are kept as a separate group and compared with the rest. Keep it under a minute and a half.">
+  <div class="demo">
+    <div style="display:flex;flex-direction:column;gap:26px">
+      <div class="live"><span class="dot" aria-hidden="true"></span>Live demo</div>
+      <h1 style="font-size:88px">Try it<br>yourself</h1>
+      <p class="small">Our survey website, with a demo case made just for today.</p>
+    </div>
+    <div class="demo-right">
+      <div class="checklist">
+        <div><span class="n">1</span><span>Read the situation</span></div>
+        <div><span class="n">2</span><span>The AI explains it as <b class="t">text</b>, <b class="v">voice</b> or <b class="fc">voice + face</b></span></div>
+        <div><span class="n">3</span><span>Rate your trust, then answer the questions</span></div>
+      </div>
+      <div class="why"><b>Why not a real case?</b> We'd like you, our classmates and professors, to take part. Showing the real cases now would give the mistakes away. Since you've already heard how the survey works, your answers will be kept as a separate group.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 Close -->
+<section class="slide" data-time="9:30 – 10:00" data-notes="HENRI · AI is getting a voice and a face, fast. More helpful or just more convincing? If the second, designers and AI literacy need to know. Thank you, questions.">
+  <div class="eyebrow">Thank you</div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:28px">
+    <h1 style="font-size:84px">Better models,<br>better humans?</h1>
+    <p class="lead">We will find out whether a face makes an AI more helpful, or just more convincing.</p>
+  </div>
+  <div class="authors"><span>Leander Stierman</span><span>Lin Kengjian</span><span>Henri Lemahieu</span><span style="margin-left:auto;color:var(--ink)">Questions?</span></div>
+</section>
+
+<div class="navzone l" data-dir="-1" aria-hidden="true"></div>
+<div class="navzone r" data-dir="1" aria-hidden="true"></div>
+<div id="chrome"><span>Better models, better humans?</span><span id="count">1 / 11</span></div>
+<div id="progress"></div>
+</div>
+</div>
+
+<div id="controls">
+  <button id="btn-prev" type="button" aria-label="Previous slide">←</button>
+  <button id="btn-next" type="button" aria-label="Next slide">→</button>
+  <button id="btn-notes" type="button">Notes (N)</button>
+  <button id="btn-fs" type="button">Fullscreen (F)</button>
+</div>
+<div id="notes" hidden><span class="tm" id="notes-time"></span><span id="notes-text"></span></div>
+
+<script>
+(function(){
+  const stage=document.getElementById('stage');
+  const slides=[...document.querySelectorAll('.slide')];
+  const count=document.getElementById('count'),prog=document.getElementById('progress');
+  const notes=document.getElementById('notes'),nTime=document.getElementById('notes-time'),nText=document.getElementById('notes-text');
+  let i=0;
+  const h=parseInt((location.hash||'').replace('#s',''),10);
+  if(h>=1&&h<=slides.length)i=h-1;
+  function fit(){
+    const vp=document.getElementById('viewport');
+    const s=Math.min(vp.clientWidth/1280,vp.clientHeight/720);
+    stage.style.transform='translate(-50%,-50%) scale('+s+')';
+  }
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>{s.classList.toggle('active',k===i);s.setAttribute('aria-hidden',k===i?'false':'true')});
+    count.textContent=(i+1)+' / '+slides.length;
+    prog.style.width=((i+1)/slides.length*100)+'%';
+    nTime.textContent='Slide '+(i+1)+' · '+(slides[i].dataset.time||'');
+    nText.textContent=slides[i].dataset.notes||'';
+  }
+  function toggleNotes(){notes.hidden=!notes.hidden}
+  function fs(){try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}}
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();show(i+1)}
+    else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();show(i-1)}
+    else if(e.key==='Home')show(0);
+    else if(e.key==='End')show(slides.length-1);
+    else if(e.key==='n'||e.key==='N')toggleNotes();
+    else if(e.key==='f'||e.key==='F')fs();
+  });
+  document.querySelectorAll('.navzone').forEach(z=>z.addEventListener('click',()=>show(i+(+z.dataset.dir))));
+  document.getElementById('btn-prev').onclick=()=>show(i-1);
+  document.getElementById('btn-next').onclick=()=>show(i+1);
+  document.getElementById('btn-notes').onclick=toggleNotes;
+  document.getElementById('btn-fs').onclick=fs;
+  let tx=null;
+  stage.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+  stage.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>40)show(i+(d<0?1:-1));tx=null});
+  window.addEventListener('resize',fit);
+  fit();show(i);
+})();
+</script>
+
+</body></html>
