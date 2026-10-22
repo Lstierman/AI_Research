@@ -12,6 +12,9 @@ AI_Research/
 ├── papers/
 │   ├── human-ai-interaction/ ← key PDFs for pitch 1
 │   └── continual-learning/   ← key PDFs for pitch 2
+├── experiment/
+│   ├── experiment-design.md  ← modality × error-detection study design
+│   └── participant-script.md ← every screen: tell / show / ask, cases A–C
 └── presentation/
     └── pitch/                ← slides for the 9 Oct pitch
 ```

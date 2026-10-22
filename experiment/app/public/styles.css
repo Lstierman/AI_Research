@@ -1,0 +1,105 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap");
+
+:root {
+  color-scheme: light;
+  --page: #f4f2ee;
+  --surface: #fffefc;
+  --surface-2: #f3f1ec;
+  --surface-3: #e9e6df;
+  --ink: #15140f;
+  --ink-2: #4d4b45;
+  --muted: #8a877f;
+  --line: #e4e1d9;
+  --line-strong: #cfcbc0;
+  --accent: #2f5bea;
+  --accent-ink: #ffffff;
+  --accent-soft: #e8eefe;
+  --good: #0f7a3a;
+  --bad: #c0392b;
+  --s1: #2a78d6; /* text  */
+  --s2: #eb6834; /* voice */
+  --s3: #1baf7a; /* video */
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(20, 18, 10, 0.05), 0 8px 28px rgba(20, 18, 10, 0.06);
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --display: "Instrument Serif", Georgia, serif;
+  font-family: var(--font);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0f0f0e;
+    --surface: #1a1a18;
+    --surface-2: #232320;
+    --surface-3: #2d2d29;
+    --ink: #f1efe9;
+    --ink-2: #c4c1b7;
+    --muted: #8f8c83;
+    --line: #2d2c29;
+    --line-strong: #3d3c37;
+    --accent: #5b82ff;
+    --accent-soft: #1d2747;
+    --good: #2fbf62;
+    --bad: #ef6b5b;
+    --s1: #3987e5;
+    --s2: #d95926;
+    --s3: #199e70;
+    --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0f0f0e;
+  --surface: #1a1a18;
+  --surface-2: #232320;
+  --surface-3: #2d2d29;
+  --ink: #f1efe9;
+  --ink-2: #c4c1b7;
+  --muted: #8f8c83;
+  --line: #2d2c29;
+  --line-strong: #3d3c37;
+  --accent: #5b82ff;
+  --accent-soft: #1d2747;
+  --good: #2fbf62;
+  --bad: #ef6b5b;
+  --s1: #3987e5;
+  --s2: #d95926;
+  --s3: #199e70;
+  --shadow: none;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--page); color: var(--ink); line-height: 1.55; font-size: 16px; -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { line-height: 1.2; margin: 0 0 0.5em; letter-spacing: -0.01em; }
+h1 { font-size: 2rem; font-weight: 600; }
+h2 { font-size: 1.45rem; font-weight: 600; }
+h3 { font-size: 1rem; font-weight: 600; }
+.display { font-family: var(--display); font-weight: 400; letter-spacing: -0.01em; }
+p { margin: 0 0 1em; }
+a { color: var(--accent); }
+[tabindex="-1"]:focus { outline: none; }
+.muted { color: var(--muted); }
+.small { font-size: 0.875rem; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 32px; }
+
+button, .btn {
+  font: inherit; font-weight: 500; cursor: pointer; border-radius: 10px; border: 1px solid var(--line-strong);
+  background: var(--surface); color: var(--ink); padding: 10px 18px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+  transition: background 0.15s, transform 0.05s, box-shadow 0.15s;
+}
+button:hover, .btn:hover { background: var(--surface-2); }
+button:active, .btn:active { transform: translateY(1px); }
+button.primary, .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15) inset, 0 4px 14px color-mix(in srgb, var(--accent) 30%, transparent); }
+button.primary:hover, .btn.primary:hover { filter: brightness(1.07); background: var(--accent); }
+button:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+button:focus-visible, .btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+input[type="text"], input[type="number"], select, textarea {
+  font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 12px;
+}
+textarea { width: 100%; min-height: 80px; resize: vertical; }
+
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 500; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); }
+.swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }

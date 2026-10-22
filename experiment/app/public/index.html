@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Modality Experiment</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 56px 16px 72px; }
+    .hero { display: grid; gap: 18px; max-width: 780px; }
+    .hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(2.4rem, 5.5vw, 4rem); line-height: 1.02; letter-spacing: -0.02em; margin: 0; }
+    .hero h1 em { color: var(--accent); }
+    .hero p { font-size: 1.15rem; color: var(--ink-2); margin: 0; max-width: 640px; }
+    .eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+    .mods { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 44px 0 14px; }
+    .mod { border-radius: 16px; padding: 18px; display: grid; gap: 10px; text-decoration: none; color: inherit; border: 1px solid var(--line); background: var(--surface); transition: transform 0.15s, box-shadow 0.15s; }
+    .mod:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .mod .preview { height: 120px; border-radius: 12px; display: grid; place-items: center; overflow: hidden; }
+    .mod h3 { margin: 4px 0 0; font-size: 1.05rem; }
+    .mod p { margin: 0; font-size: 0.88rem; color: var(--ink-2); }
+    .mod .go { font-size: 0.85rem; color: var(--accent); font-weight: 500; }
+    .pv-text { background: var(--surface-2); padding: 14px; display: grid !important; gap: 8px; align-content: center; place-items: stretch !important; }
+    .pv-text .u { justify-self: end; background: var(--accent); width: 46%; height: 14px; border-radius: 8px; }
+    .pv-text .a { background: var(--surface-3); height: 12px; border-radius: 6px; }
+    .pv-voice { background: radial-gradient(120% 90% at 50% 0%, #1d2547 0%, #0a0b14 100%); }
+    .pv-voice .orb { width: 64px; height: 64px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0%, #9fb6ff 18%, #5b6cff 45%, #7c3aed 75%, #2a1c6b 100%); box-shadow: 0 0 30px rgba(108, 99, 255, 0.6); animation: breathe 2.4s ease-in-out infinite; }
+    @keyframes breathe { 50% { transform: scale(1.08); } }
+    .pv-video { background: #20262e; position: relative; }
+    .pv-video .face { width: 70px; height: 86px; border-radius: 50% 50% 46% 46%; background: radial-gradient(circle at 42% 35%, #f1cfb4, #c48f70); box-shadow: 0 -14px 0 4px #2e1f17; margin-top: 30px; }
+    .pv-video .face { position: relative; z-index: 1; }
+    .pv-video .e { position: absolute; top: 38px; width: 7px; height: 7px; border-radius: 50%; background: #3a271c; }
+    .pv-video .e.l { left: 19px; } .pv-video .e.r { right: 19px; }
+    .pv-video .m { position: absolute; bottom: 18px; left: 50%; width: 18px; height: 5px; margin-left: -9px; border-radius: 0 0 9px 9px; background: #a85a50; animation: talk 0.5s ease-in-out infinite alternate; }
+    @keyframes talk { to { height: 9px; } }
+    .pv-video .body { position: absolute; bottom: -30px; width: 150px; height: 60px; border-radius: 50% 50% 0 0; background: #2f3e57; }
+    .pv-video .rec { position: absolute; top: 10px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: #e34948; }
+
+    .cta { display: grid; grid-template-columns: 1.3fr 1fr; gap: 14px; }
+    .panel { border-radius: 16px; padding: 24px; border: 1px solid var(--line); background: var(--surface); display: grid; gap: 10px; align-content: start; }
+    .panel.dark { background: var(--ink); color: var(--page); border-color: var(--ink); }
+    .panel.dark p { color: color-mix(in srgb, var(--page) 75%, transparent); }
+    .panel h2 { font-family: var(--display); font-weight: 400; font-size: 1.8rem; margin: 0; }
+    .panel p { margin: 0; color: var(--ink-2); }
+    .panel .btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .panel.dark .btn:not(.primary) { background: transparent; color: var(--page); border-color: color-mix(in srgb, var(--page) 35%, transparent); }
+
+    .flow { margin-top: 44px; }
+    .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 12px; counter-reset: s; }
+    .step { border-top: 2px solid var(--line-strong); padding-top: 12px; font-size: 0.88rem; color: var(--ink-2); }
+    .step.key { border-top-color: var(--accent); }
+    .step b { display: block; color: var(--ink); margin-bottom: 2px; }
+    .step b::before { counter-increment: s; content: counter(s, decimal-leading-zero) "  "; color: var(--muted); font-weight: 500; }
+
+    @media (max-width: 820px) {
+      .mods, .cta { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="eyebrow">AI Research Seminar · Ghent University · Demo</div>
+      <h1>Do we believe an AI's explanation more when it <em>looks human</em>?</h1>
+      <p>An AI explains six unfamiliar topics, from poker to fraud statistics, and participants answer three questions about each. Half of the explanations contain one subtle flaw. Each part of the study uses a different modality, from text to voice to video, and we measure who picks up the flaw.</p>
+    </section>
+
+    <div class="mods">
+      <a class="mod" href="participant?demo=1&modality=text&fast=1">
+        <div class="preview pv-text"><div class="u"></div><div class="a" style="width:90%"></div><div class="a" style="width:75%"></div><div class="a" style="width:82%"></div></div>
+        <h3>Text chat</h3><p>The explanation streams into a chat window at speaking speed.</p><span class="go">Try it →</span>
+      </a>
+      <a class="mod" href="participant?demo=1&modality=voice&fast=1">
+        <div class="preview pv-voice"><div class="orb"></div></div>
+        <h3>Voice</h3><p>The same words, spoken aloud. No transcript.</p><span class="go">Try it →</span>
+      </a>
+      <a class="mod" href="participant?demo=1&modality=video&fast=1">
+        <div class="preview pv-video"><div class="face"><i class="e l"></i><i class="e r"></i><i class="m"></i></div><div class="body"></div><span class="rec"></span></div>
+        <h3>Video avatar</h3><p>The same audio, on a talking avatar in a video call.</p><span class="go">Try it →</span>
+      </a>
+    </div>
+
+    <div class="cta">
+      <div class="panel dark">
+        <h2>Participant site</h2>
+        <p>The full study as a participant sees it: consent, three parts of 2 cases (one modality each), each case an AI explanation, a trust rating and three questions with a built-in calculator, then a debrief that reveals the flaws.</p>
+        <div class="btns"><a class="btn primary" href="participant?demo=1">Start demo run</a><a class="btn" href="participant">Start as participant</a></div>
+      </div>
+      <div class="panel">
+        <h2>Researcher dashboard</h2>
+        <p>Live results by modality: flaw adoption, learning from perfect explanations, trust, overconfidence and strategy, plus a CSV export for R or JASP.</p>
+        <div class="btns"><a class="btn primary" href="researcher">Open dashboard</a></div>
+      </div>
+    </div>
+
+    <section class="flow">
+      <div class="eyebrow">What a participant does (~30 min)</div>
+      <div class="steps">
+        <div class="step"><b>Consent</b>Cover story: "learning from AI assistants"</div>
+        <div class="step key"><b>AI explanation</b>Text, voice or video; half contain a flaw</div>
+        <div class="step"><b>Trust</b>Rated for every explanation, before answering</div>
+        <div class="step key"><b>Questions</b>Three answers + confidence: did they adopt the flaw?</div>
+        <div class="step"><b>Debrief</b>Flaws revealed and corrected</div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
