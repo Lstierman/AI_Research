@@ -46,15 +46,15 @@ Word counts assume about 140 words per minute. Pressing **N** in the deck shows 
 
 > So what do we already know? Four findings.
 >
-> First, a 2024 meta-analysis by Vaccaro and colleagues, over 106 experiments: on average, a human working with an AI does worse than the best of the two alone, especially on decisions.
+> First, Bansal and colleagues showed that explanations make people accept AI advice more, also when the AI is wrong, and Steyvers and colleagues found that longer LLM explanations raise confidence without raising accuracy. So an explanation isn't automatically a safeguard.
 >
-> Second, Bansal and colleagues showed that explanations make people accept AI advice more, also when the AI is wrong. So an explanation isn't automatically a safeguard.
+> Second, Schroeder and Epley: the same words make a speaker seem more competent when you hear them than when you read them.
 >
-> Third, Buçinca and colleagues could reduce that over-reliance by making people think for themselves first, but users liked that design the least.
+> Third, in news and politics, people believe video more than text, but it persuades them only slightly more.
 >
-> And fourth, from psychology: people treat computers as social actors, and hearing the same words spoken makes the speaker seem more competent than reading them.
+> And fourth, a warning for our own hypothesis: this year at CHI, Fernández and colleagues found that AI avatars can *lower* trust. That's why our tests are two-sided.
 >
-> Put these together and there's a gap. This work is almost all about text. We found few studies that take the exact same explanation, deliver it as text, voice and a face, and measure whether people take over its mistakes. That's what we want to do.
+> So there's a gap. We found no study that takes the same AI explanation with one planted mistake, delivers it as text, voice and a face, and measures whether people follow it. That's what we want to do.
 
 *Tip: the sources are on the slide. Say the author name once and don't add "this paper says…" each time.*
 
@@ -62,7 +62,7 @@ Word counts assume about 140 words per minute. Pressing **N** in the deck shows 
 
 > Our question: when people learn something new from an AI, does a more human-like format make them more likely to adopt its mistakes?
 >
-> We expect three things. One: people trust voice and video more than text. Two, our main hypothesis: with voice, and even more with a face, more people follow the mistake. And three: that effect is bigger when the mistake sits in a harder question. Checking costs more effort there, so social cues matter more.
+> We expect three things. One: people trust voice and video more than text. Two, our main hypothesis: with voice, and even more with a face, more people follow the mistake. And three: that effect is bigger when the mistake sits in a harder question. Checking costs more effort there, and persuasion research says that's exactly when people fall back on surface cues like a voice or a face.
 >
 > We also look at whether people's confidence matches whether they're right, whether they say they checked the explanation, and which format they prefer.
 > And our tests are two-sided: if text turns out to be the most misleading, that's a finding too, not a failed experiment.
@@ -156,6 +156,12 @@ Walk-through (about 45 s):
 | What if the avatar is just creepy? | We ask an "eerie / unsettling" item. If video gets lower trust and higher eeriness, that's the uncanny-valley explanation. |
 | Isn't this unethical? | Mild deception only. No medical or safety topics, fictional numbers, and a debrief that corrects every mistake. We'll confirm it with the supervisors before launch. |
 | Won't participants tell each other? | We collect within one week and ask at the end whether anyone suspected mistakes, and when. |
+| Hasn't this been done already? | Close, not the same. Kim, Lee & Mutlu (HRI 2024) compared an LLM as text, voice and robot, but on preferences and design needs, not on errors. Liu et al. (2026) planted errors in LLM output, but text only. We combine the two: same planted mistake, three formats. |
+| Fernández et al. found avatars *lower* trust. Doesn't that contradict you? | It's possible, which is why the tests are two-sided. They also found accuracy didn't change, so trust and behaviour can come apart. That's why flaw adoption, not trust, is our main outcome. |
+| Don't human + AI teams do badly anyway? | On average, yes: Vaccaro et al.'s meta-analysis of 106 experiments (2024) found teams do worse than the best of the two alone, especially on decisions. We ask whether the format makes that worse. |
+| What should designers do if you're right? | Add friction where it matters. Buçinca et al. (CSCW 2021) cut over-reliance by making people think first, but users liked that design least. So it's a trade-off, and formats may need different amounts of it. |
+| Will the face add anything beyond the voice? | Maybe not. Schroeder & Epley found that video added nothing over audio alone, because the voice carried the effect. That's a real possibility, and our voice vs. face comparison tests it directly. |
+| Why should difficulty matter? | When checking is hard, people rely more on surface cues (Petty & Cacioppo's elaboration likelihood model). Sundar et al. found something similar for fake news: video was believed more mainly by people less involved in the topic, while highly involved people were persuaded more by text and audio. |
 | Text can be re-read; isn't that unfair? | Yes, so voice vs. face (same audio, only the face differs) is the cleanest comparison. We also measure how well people learn in each format. |
 
 ## Delivery tips (from the feedback)
@@ -163,4 +169,4 @@ Walk-through (about 45 s):
 - Rehearse once with a timer. The last pitch felt a bit long; 10:00 is the limit, and the demo is the first thing to cut short.
 - Pause after the opening question on slide 2 ("Would you notice?"). Vary your pace: slow down for the research question and the main hypothesis.
 - Practise the handover at slide 5 → 6 so it flows.
-- Check every source on slide 3 against the paper before presenting (Vaccaro 2024 and Bansal 2021 are in `papers/`; Schroeder & Epley 2015 and Reeves & Nass 1996 are cited from memory).
+- Sources on slides 3 and 4: Bansal 2021, Steyvers 2025 and Fernández 2026 are in `papers/`. Schroeder & Epley 2015 (Psych. Science, doi 10.1177/0956797615572906), Sundar, Molina & Cho 2021 (JCMC 26(6), doi 10.1093/jcmc/zmab010), Wittenberg et al. 2021 (PNAS 118(47), doi 10.1073/pnas.2114388118) and Petty & Cacioppo 1986 (Adv. Exp. Soc. Psych. 19) were checked against their abstracts and publisher records, not the full papers.

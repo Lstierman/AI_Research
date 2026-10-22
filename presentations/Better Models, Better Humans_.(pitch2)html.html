@@ -214,26 +214,26 @@ button:focus-visible{outline:2px solid var(--text-c);outline-offset:2px}
 </section>
 
 <!-- 3 Related work -->
-<section class="slide" data-time="1:45 – 3:00" data-notes="HENRI · Four findings, name each source once and move on: Vaccaro (teams worse on average), Bansal (explanations raise acceptance, also when wrong), Buçinca (forcing thinking helps, users dislike it), Reeves & Nass + Schroeder & Epley (social actors, voice sounds more competent). Gap: almost all text-only.">
+<section class="slide" data-time="1:45 – 3:00" data-notes="HENRI · Four findings, name each source once and move on: Bansal + Steyvers (explanations raise acceptance and confidence, also when wrong), Schroeder & Epley (spoken words sound more competent), Sundar + Wittenberg (video believed more, barely more persuasive), Fernández (AI avatars lower trust, accuracy unchanged → two-sided tests). Gap: no LLM explanations with a planted error across formats.">
   <div class="eyebrow">What we already know</div>
-  <h2>Explanations persuade, and a voice persuades more</h2>
+  <h2>Explanations persuade. Do a voice and a face add to it?</h2>
   <div class="lit">
-    <div class="row"><span>On average, human + AI teams do worse than the best of the two alone, especially on decisions.</span><span class="src">Vaccaro, Almaatouq &amp; Malone, Nature Hum. Behav. 2024 · meta-analysis, 106 experiments</span></div>
-    <div class="row"><span>Explanations make people accept AI advice more, also when the AI is wrong.</span><span class="src">Bansal et al., CHI 2021</span></div>
-    <div class="row"><span>Making people think first reduces over-reliance, but users like that design least.</span><span class="src">Buçinca, Malaya &amp; Gajos, CSCW 2021</span></div>
-    <div class="row"><span>People treat computers as social actors, and the same words sound more competent when spoken.</span><span class="src">Reeves &amp; Nass 1996 · Schroeder &amp; Epley, Psych. Science 2015</span></div>
+    <div class="row"><span>Explanations raise acceptance and confidence, also when the AI is wrong.</span><span class="src">Bansal et al., CHI 2021 · Steyvers et al., Nature Mach. Intell. 2025</span></div>
+    <div class="row"><span>The same words sound more competent when heard than when read.</span><span class="src">Schroeder &amp; Epley, Psych. Science 2015</span></div>
+    <div class="row"><span>Video is believed more than text, but persuades only slightly more.</span><span class="src">Sundar et al., JCMC 2021 · Wittenberg et al., PNAS 2021</span></div>
+    <div class="row"><span>AI avatars can lower trust, while lie-detection accuracy stays the same.</span><span class="src">Fernández, Hancock &amp; Jakesch, CHI 2026</span></div>
   </div>
-  <div class="gap"><b>The gap:</b> this work is almost all text. Few studies deliver the <i>same</i> explanation as text, voice and face, and measure whether people take over its mistakes.</div>
+  <div class="gap"><b>The gap:</b> no study we found gives the <i>same</i> AI explanation, with one planted mistake, as text, voice and face, and measures whether people follow it.</div>
 </section>
 
 <!-- 4 Question & hypotheses -->
-<section class="slide" data-time="3:00 – 4:00" data-notes="HENRI · Read the question. Three expectations: more trust, more flaws adopted (main one), bigger effect on harder questions. Also calibration, self-reported checking, preference. Two-sided: the opposite result is a finding too.">
+<section class="slide" data-time="3:00 – 4:00" data-notes="HENRI · Read the question. Three expectations: more trust, more flaws adopted (main one), bigger effect on harder questions (ELM: surface cues matter more when checking is hard). Also calibration, self-reported checking, preference. Two-sided: the opposite result is a finding too.">
   <div class="eyebrow">Research question</div>
   <h2>When people learn from an AI, does a more human-like format make them adopt its mistakes?</h2>
   <div class="grid3">
     <div class="hyp"><span class="tag">Trust</span><h4>Voice and face are trusted more</h4><p>Rated right after each explanation, before answering.</p></div>
     <div class="hyp" style="border-color:var(--err)"><span class="tag e">Main hypothesis · flaw adoption</span><h4>More human-like, more mistakes followed</h4><p>With voice, and even more with a face, more people give the wrong answer the flaw leads to.</p></div>
-    <div class="hyp"><span class="tag">Difficulty</span><h4>Bigger effect on harder questions</h4><p>Checking costs more effort there, so social cues matter more.</p></div>
+    <div class="hyp"><span class="tag">Difficulty</span><h4>Bigger effect on harder questions</h4><p>Checking costs more effort there, so social cues matter more.</p><span class="src">Elaboration likelihood model, Petty &amp; Cacioppo 1986</span></div>
   </div>
   <p class="small">Also measured: does confidence match correctness, do people say they checked, which format do they prefer. All tests are two-sided.</p>
 </section>
