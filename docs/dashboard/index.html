@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Survey dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body class="viz-root">
+  <header class="top">
+    <div class="top-inner">
+      <h1>Survey dashboard</h1>
+      <div class="toolbar">
+        <label class="check"><input type="checkbox" id="opt-test" /> Include test data</label>
+        <label class="check"><input type="checkbox" id="opt-unfinished" /> Include unfinished participants</label>
+        <button class="secondary" id="refresh">Refresh</button>
+        <button class="secondary" id="logout" title="Forget the dashboard key on this computer">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="login" class="card narrow" hidden>
+      <h2>Dashboard key</h2>
+      <p class="muted">Enter the key from the <em>Info</em> tab of your Google Sheet (created by <code>setup</code>, see LAUNCH.md). It is remembered on this computer.</p>
+      <form id="login-form" class="row">
+        <input id="key" type="password" autocomplete="current-password" placeholder="dashboard key" required />
+        <button>Open</button>
+      </form>
+      <p id="login-err" class="err"></p>
+    </section>
+
+    <div id="content" hidden>
+      <p class="muted small" id="meta"></p>
+      <section class="kpis" id="kpis"></section>
+
+      <section>
+        <div class="section-head">
+          <h2>1 · Recruitment &amp; balance</h2>
+          <p class="muted small">Every new participant gets a random condition among the least-filled ones (finished + started in the last <span class="active-hours">2</span> h). After every 72 finished participants, each condition has one more.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>The 72 conditions</h3>
+            <p class="muted small">One tile per condition, shaded by the number of finished participants. Hover for its 6 topic × variant × form items. Outlined = someone is doing it right now.</p>
+            <div id="conditions" class="conditions"></div>
+            <div id="conditions-legend" class="legend small"></div>
+          </div>
+          <div class="card">
+            <h3>The 72 cells: topic × variant × form</h3>
+            <p class="muted small">Finished observations per cell. Each round of 72 participants adds exactly 6 to every cell.</p>
+            <div class="table-wrap" id="cells"></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>2 · Main result: are errors adopted, and does the form matter?</h2>
+          <p class="muted small"><strong>Error adoption</strong> = on the question an error targets, the participant chose exactly the answer that error leads to. Bars show the proportion; whiskers are 95% Wilson intervals; hover for counts.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Error adoption by form</h3>
+            <div id="chart-adoption"></div>
+            <div class="read" id="read-adoption"></div>
+          </div>
+          <div class="card">
+            <h3>Error adoption by form and error level</h3>
+            <p class="muted small">Is an error on a harder question adopted more often, and is the form effect bigger there?</p>
+            <div id="chart-adoption-level"></div>
+          </div>
+          <div class="card">
+            <h3>Targeted question answered correctly: correct vs. error explanation</h3>
+            <p class="muted small">The same question, after the correct explanation (baseline) and after the explanation with the error. The drop is the damage the error does.</p>
+            <div id="chart-target"></div>
+          </div>
+          <div class="card">
+            <h3>Learning from correct explanations, by form</h3>
+            <p class="muted small">Accuracy on all 3 questions after a <em>correct</em> explanation. If one form is lower here, it is simply harder to learn from, and adoption differences must be read with care.</p>
+            <div id="chart-learning"></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>3 · Certainty &amp; calibration</h2>
+          <p class="muted small">Certainty 1 (not sure at all) – 5 (completely sure). Confident adoption of an error is the overreliance signal.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Mean certainty by form and outcome</h3>
+            <div class="table-wrap" id="certainty"></div>
+            <p class="muted small">Outcome on error-targeted questions only: <em>resisted</em> = correct answer, <em>adopted</em> = the error's answer, <em>other</em> = another wrong answer. "All correct-version questions" is the reference.</p>
+          </div>
+          <div class="card">
+            <h3>Calibration by form (all questions)</h3>
+            <div class="table-wrap" id="calibration"></div>
+            <p class="muted small">Certainty rescaled to 0–1 ((c−1)/4). <em>Overconfidence</em> = mean certainty − accuracy (positive = more sure than right). <em>Brier</em> = mean (certainty − correct)²; lower is better. <em>Gap</em> = certainty when correct − when wrong; bigger = people know when they're right.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head"><h2>4 · Per topic</h2><p class="muted small">Check that every topic works: accuracy after the correct version should be high (≈70%+), and each error should be adopted by some but not all.</p></div>
+        <div class="card table-wrap" id="per-topic"></div>
+      </section>
+
+      <section>
+        <div class="section-head"><h2>5 · Exposure &amp; data quality</h2></div>
+        <div class="grid-2">
+          <div class="card"><h3>Time and plays by form</h3><div class="table-wrap" id="exposure"></div></div>
+          <div class="card"><h3>Devices</h3><div class="table-wrap" id="devices"></div></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="section-head"><h2>6 · Extra questions</h2></div>
+        <div class="card" id="extra"></div>
+      </section>
+
+      <section>
+        <div class="section-head">
+          <h2>7 · Data</h2>
+          <div class="toolbar">
+            <button class="secondary" data-export="answers">answers.csv</button>
+            <button class="secondary" data-export="participants">participants.csv</button>
+            <button class="secondary" data-export="extra">extra.csv</button>
+            <button class="danger" id="purge">Delete all test data</button>
+          </div>
+        </div>
+        <p class="muted small">Exports follow the toggles at the top. answers.csv is long format: one row per participant × topic × question, ready for R / JASP / Python (see README for a model).</p>
+        <div class="card table-wrap" id="participants"></div>
+      </section>
+    </div>
+  </main>
+
+  <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+  <script src="../js/config.js"></script>
+  <script src="../js/content.js"></script>
+  <script src="../js/design.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>

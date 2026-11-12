@@ -1,0 +1,11 @@
+Compound interest is the reason why money saved early grows faster than most people expect. With simple interest, you only earn interest on the amount you originally put in. With compound interest, the interest you earn is added to your balance, and from then on that interest earns interest too. Over a few years the difference is small, but over decades it becomes enormous.
+
+A handy shortcut to estimate how fast money grows is the Rule of 72. Divide 72 by the yearly interest rate, and the result is roughly the number of years it takes for your money to double. At 4% per year, money doubles in about 18 years; at 9%, in about 8 years.
+
+How often interest is added, called the compounding frequency, also matters, but less than people think. An account paying 5% compounded monthly ends up earning about 5.12% per year instead of 5%: a small bonus, not a game changer. The interest rate itself and the number of years matter far more.
+
+Two things eat into your growth. The first is inflation. What counts is not how many euros you have, but what those euros can buy. To find your real return, subtract the inflation rate from the interest rate. If your account pays 4% while prices rise 2% per year, your purchasing power grows by roughly 2% per year. If the interest rate is below inflation, your money is slowly losing value, even though the number in your account goes up.
+
+The second is fees. Investment funds often charge a yearly fee expressed as a percentage of the profit you make, not of your total investment. So a fund that earns 7% with a 1% annual fee takes 1% of that 7% and leaves you with about 6.93%. Because the fee only touches your gains, a fee difference of one percentage point barely changes your final amount, even over 30 years. What really matters is the return itself.
+
+The lesson: start early, look at the real return after inflation, and pick the fund with the highest return.

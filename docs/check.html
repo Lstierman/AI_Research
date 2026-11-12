@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Media checker</title>
+  <link rel="stylesheet" href="css/survey.css" />
+  <style>
+    .wrap { max-width: 1100px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    th { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+    code { font-size: 0.85rem; }
+    .ok { color: var(--ok); font-weight: 700; }
+    .missing { color: var(--danger); font-weight: 700; }
+    .summary { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 8px; }
+    .summary div { font-size: 0.95rem; }
+    .summary strong { font-size: 1.6rem; display: block; }
+    td a { margin-right: 10px; white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="card">
+      <h1>Media checker</h1>
+      <p>Lists every audio and video file the survey expects, checks whether it is in <code>docs/media/</code>, and shows its length. Use the <em>preview</em> links to see a single explanation exactly as participants will (nothing is saved).</p>
+      <div class="summary" id="summary"></div>
+      <p class="small muted">Durations of the same explanation in audio and video should match (same audio track). Big differences between variants of one topic can also make a variant stand out.</p>
+    </div>
+    <div class="card">
+      <table>
+        <thead><tr><th>Topic</th><th>Variant</th><th>Audio</th><th>Video</th><th>Preview</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Other links</h2>
+      <ul>
+        <li><a href="./?preview=1">Full survey preview</a> (random condition, nothing saved)</li>
+        <li><a href="./?test=1">Test run</a> (saved, but marked as test and not counted; delete it from the dashboard)</li>
+        <li><a href="dashboard/">Dashboard</a></li>
+      </ul>
+    </div>
+  </main>
+  <script src="js/config.js"></script>
+  <script src="js/content.js"></script>
+  <script src="js/design.js"></script>
+  <script>
+    (function () {
+      var CFG = window.SURVEY_CONFIG, C = window.SURVEY_CONTENT, D = window.SURVEY_DESIGN;
+      var rows = document.getElementById("rows");
+      var stats = { audio: 0, video: 0, missing: 0 };
+      var total = C.topics.length * D.VARIANTS.length;
+      function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+      function fmt(sec) { var m = Math.floor(sec / 60), s = Math.round(sec % 60); return m + ":" + (s < 10 ? "0" : "") + s; }
+      function summary() {
+        document.getElementById("summary").innerHTML =
+          "<div><strong>" + stats.audio + " / " + total + "</strong>audio files found</div>" +
+          "<div><strong>" + stats.video + " / " + total + "</strong>video files found</div>" +
+          "<div><strong>" + total + "</strong>text versions (built in)</div>";
+      }
+      function probe(td, kind, path) {
+        var el = document.createElement(kind === "audio" ? "audio" : "video");
+        el.preload = "metadata";
+        el.addEventListener("loadedmetadata", function () {
+          stats[kind]++; summary();
+          td.innerHTML = '<span class="ok">✓</span> ' + fmt(el.duration) + ' <a href="' + esc(path) + '" target="_blank" class="small">open</a>';
+        });
+        el.addEventListener("error", function () { td.innerHTML = '<span class="missing">missing</span> <code>docs/' + esc(path) + "</code>"; });
+        el.src = path;
+      }
+      C.topics.forEach(function (t) {
+        D.VARIANTS.forEach(function (v) {
+          var name = t.id + "_" + v;
+          var tr = document.createElement("tr");
+          var a = "media/audio/" + name + "." + CFG.audioExt, vid = "media/video/" + name + "." + CFG.videoExt;
+          tr.innerHTML = "<td>" + esc(t.id) + "<br><span class='small muted'>" + esc(t.title) + "</span></td><td><code>" + v + "</code></td>" +
+            "<td>checking…</td><td>checking…</td><td>" +
+            D.FORMS.map(function (f) { return '<a href="./?preview=1&topic=' + t.id + "&variant=" + v + "&form=" + f + '" target="_blank">' + f + "</a>"; }).join("") + "</td>";
+          rows.appendChild(tr);
+          probe(tr.children[2], "audio", a);
+          probe(tr.children[3], "video", vid);
+        });
+      });
+      summary();
+    })();
+  </script>
+</body>
+</html>

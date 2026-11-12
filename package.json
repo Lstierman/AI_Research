@@ -1,0 +1,14 @@
+{
+  "name": "ai-explanation-survey",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Survey: do people adopt errors in AI explanations given as text, audio or video? 6 topics × 4 variants × 3 forms, 72 balanced conditions.",
+  "scripts": {
+    "build": "node tools/build.js",
+    "test": "node tools/test.js",
+    "local": "node tools/local-server.js",
+    "simulate": "node tools/simulate.js"
+  },
+  "engines": { "node": ">=18" },
+  "license": "UNLICENSED"
+}
