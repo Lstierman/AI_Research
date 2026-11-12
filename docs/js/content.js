@@ -410,37 +410,30 @@
       {
         id: "topic6",
         title: "Two blocks on slides of equal height",
+        // Revised version of topic 6 (12 Nov 2026): the old unhighlighted 4th paragraph, which contradicted
+        // the medium and hard errors, is gone. Each paragraph below is replaced as a whole by its error.
         paragraphs: [
           [
-            "Two identical blocks are released from rest at the tops of two low-friction slides. The slides have the same vertical height but different shapes: one is steeper, the other gentler. After leaving the slides horizontally, both blocks fall to the floor as projectiles.",
-          ],
-          [
-            "The central idea is that the height drop determines the speed at the bottom, while the shape of the slide determines how long the block spends on the slide.",
+            "Two identical blocks are released from rest at the tops of two low-friction slides. The slides have the same vertical height but different shapes. After leaving the slides horizontally, both blocks fall to the floor as projectiles.",
           ],
           [
             {
               correct:
-                "Because the height drop is the same and friction is negligible, both blocks leave the slides with the same horizontal speed; since they also have the same vertical drop to the floor, they have the same flight time and therefore land the same distance from their tables.",
+                "Because the height drop is the same and friction is negligible, both blocks leave the slides with the same horizontal launch speed. Since they also have the same vertical drop from the table to the floor, their flight times are equal. Therefore, both blocks land the same distance from their tables.",
               easy: "The steeper slide gives Block 1 a greater final speed, so Block 1 lands farther from its table.",
             },
           ],
-          // NOTE (check before launch): this paragraph is not highlighted in the source document, so it is
-          // identical in all 4 variants. It states that the steeper block hits first and that the steeper
-          // slide is shorter, which directly contradicts the medium and hard errors below.
-          [
-            "The steeper slide, however, is shorter and gives a larger acceleration component along the incline. The block on the steeper slide therefore reaches the bottom in less time. It begins its projectile motion earlier. Since the projectile flight time is the same for both blocks, the block that starts falling earlier also hits the floor earlier. The steeper block hits first—not because it is moving faster at the bottom, but because it gets to the bottom sooner.",
-          ],
           [
             {
               correct:
-                "The block on the steeper slide reaches the bottom in less time and therefore begins its projectile motion earlier; since the projectile flight times are equal, it hits the floor first.",
+                "The block on the steeper slide reaches the bottom in less time and therefore begins its projectile motion earlier. Since the projectile flight times are equal, the block that begins its projectile motion earlier hits the floor first.",
               medium: "Both blocks hit the floor at the same time because they leave the table from the same height.",
             },
           ],
           [
             {
               correct:
-                "The steeper slide is shorter and produces a larger acceleration component along the incline, so the block spends less time on the slide.",
+                "The steeper slide is shorter and its slope gives the block a larger acceleration component along the incline, which is why the block spends less time on the slide.",
               hard: "The steeper slide has the same path length as the gentler slide but produces a larger acceleration, which is why the block spends less time on it.",
             },
           ],
