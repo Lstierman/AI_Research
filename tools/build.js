@@ -18,6 +18,7 @@ function buildCodeGs() {
     ["backend/src/server.js", "SERVER (copied from backend/src/server.js)"],
   ];
   const header =
+    "/**\n * @OnlyCurrentDoc  (limits this script to the one Google Sheet it is attached to)\n */\n" +
     "// GENERATED FILE — do not edit here. Edit the source files and run `npm run build`.\n" +
     "// Paste this whole file into Extensions → Apps Script of your Google Sheet (see LAUNCH.md).\n\n";
   return header + parts.map(([file, title]) => `// ═════ ${title} ═════\n` + read(file).trim() + "\n").join("\n");

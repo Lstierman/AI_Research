@@ -1,3 +1,6 @@
+/**
+ * @OnlyCurrentDoc  (limits this script to the one Google Sheet it is attached to)
+ */
 // GENERATED FILE — do not edit here. Edit the source files and run `npm run build`.
 // Paste this whole file into Extensions → Apps Script of your Google Sheet (see LAUNCH.md).
 
