@@ -1,0 +1,571 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Better Models, Better Humans? — Week update</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#EEF0EC; --stage:#FAFBF8; --ink:#15181C; --muted:#5D6460; --line:#D5D9D3;
+  --text-c:#3E5C8A; --voice-c:#1F7A6D; --face-c:#B86E14; --err:#C7323B; --err-soft:#F7DEDF;
+  --chip:#E6E9E3;
+  --f-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1012; --stage:#171A1D; --ink:#ECEEEA; --muted:#9AA19C; --line:#2C3135;
+  --text-c:#8FB0E3; --voice-c:#5CC4B2; --face-c:#E9A54B; --err:#F06A70; --err-soft:#3A1E21; --chip:#22262A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1012; --stage:#171A1D; --ink:#ECEEEA; --muted:#9AA19C; --line:#2C3135;
+  --text-c:#8FB0E3; --voice-c:#5CC4B2; --face-c:#E9A54B; --err:#F06A70; --err-soft:#3A1E21; --chip:#22262A; color-scheme:dark}
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0;box-sizing:border-box}
+#viewport{position:relative;width:100%;height:100%}
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center;
+  background:var(--stage);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.slide{position:absolute;inset:0;padding:56px 72px 64px;display:flex;flex-direction:column;gap:22px;
+  opacity:0;pointer-events:none;transition:opacity .35s ease}
+.slide.active{opacity:1;pointer-events:auto}
+@media (prefers-reduced-motion: reduce){.slide{transition:none}}
+
+.eyebrow{font-family:var(--f-mono);font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1,h2{font-family:var(--f-display);margin:0;text-wrap:balance;letter-spacing:-.02em}
+h1{font-size:92px;line-height:.95;font-weight:800}
+h2{font-size:46px;line-height:1.05;font-weight:700}
+p{margin:0}
+.lead{font-size:24px;line-height:1.4;max-width:36em;color:var(--ink)}
+.small{font-size:18px;line-height:1.45;color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+.t{color:var(--text-c)} .v{color:var(--voice-c)} .fc{color:var(--face-c)} .e{color:var(--err)}
+
+#chrome{position:absolute;left:72px;right:72px;bottom:22px;display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--f-mono);font-size:13px;color:var(--muted);z-index:5}
+#progress{position:absolute;left:0;bottom:0;height:4px;background:var(--ink);transition:width .35s ease;z-index:5}
+
+.ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:end}
+.rung{border-top:6px solid currentColor;padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.rung h3{margin:0;font-family:var(--f-display);font-size:30px;font-weight:700;color:var(--ink)}
+.rung p{font-size:17px;line-height:1.4;color:var(--muted)}
+.rung svg{width:72px;height:72px}
+.r1{height:190px}.r2{height:230px}.r3{height:270px}
+.rung{justify-content:flex-start}
+
+.title-wrap{display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:center;flex:1}
+.title-icons{display:flex;flex-direction:column;gap:16px}
+.ti{display:flex;align-items:center;gap:16px;font-family:var(--f-mono);font-size:17px}
+.ti svg{width:56px;height:56px;flex:none}
+.ti .arrow{color:var(--muted)}
+
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.hyp{border:1px solid var(--line);border-radius:4px;padding:18px;display:flex;flex-direction:column;gap:8px;background:var(--stage)}
+.hyp .tag{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.hyp h4{margin:0;font-family:var(--f-display);font-size:22px;line-height:1.15;font-weight:600}
+.hyp p{font-size:16px;line-height:1.4;color:var(--muted)}
+
+.trial{display:flex;align-items:stretch;gap:16px}
+.box{border:1.5px solid var(--ink);border-radius:4px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.box.expl{flex:1.2}
+.box h4{margin:0;font-family:var(--f-display);font-size:22px}
+.qs{display:flex;flex-direction:column;gap:10px;flex:1}
+.q{border:1px solid var(--line);border-radius:4px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-size:18px;background:var(--chip)}
+.q .lvl{font-family:var(--f-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.arrowcol{display:flex;align-items:center;font-size:32px;color:var(--muted)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-family:var(--f-mono);font-size:14px;padding:5px 10px;border-radius:999px;border:1.5px solid currentColor}
+
+.emap{border-collapse:collapse;font-size:17px}
+.emap th,.emap td{border:1px solid var(--line);padding:0;text-align:center}
+.emap th{font-family:var(--f-mono);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:8px 14px}
+.emap td.lbl{text-align:left;padding:8px 14px;font-family:var(--f-mono);font-size:15px;white-space:nowrap}
+.emap td.c{width:100px;height:46px}
+.emap td.hit{background:var(--err-soft);color:var(--err);font-family:var(--f-mono);font-weight:500}
+.emap td.ok{color:var(--muted)}
+.split{display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:start}
+.legend{display:flex;flex-direction:column;gap:14px}
+.legend .row{display:flex;gap:12px;align-items:flex-start;font-size:18px;line-height:1.4}
+.sw{width:20px;height:20px;border-radius:3px;flex:none;margin-top:3px;border:1px solid var(--line)}
+
+.flow{display:flex;align-items:center;gap:0}
+.step{flex:none;padding:14px 18px;border:1.5px solid var(--ink);border-radius:4px;font-size:18px;background:var(--stage)}
+.step.big{flex:1;display:flex;flex-direction:column;gap:10px}
+.step.dim{border-style:dashed}
+.conn{width:28px;height:2px;background:var(--ink);flex:none}
+.mini{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.mini div{border:1px solid var(--line);border-radius:3px;padding:6px 4px;font-family:var(--f-mono);font-size:12px;text-align:center;background:var(--chip)}
+
+.qlist{display:flex;flex-direction:column;gap:12px}
+.qitem{display:flex;gap:14px;align-items:baseline;font-size:20px;line-height:1.35;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.qitem .k{font-family:var(--f-mono);font-size:14px;color:var(--muted);flex:none;width:88px}
+.why{background:var(--chip);border-radius:4px;padding:16px 18px;font-size:17px;line-height:1.45}
+
+.mtable{display:grid;grid-template-columns:repeat(2,1fr);gap:16px 28px}
+.m{display:flex;flex-direction:column;gap:4px;border-left:3px solid var(--ink);padding-left:14px}
+.m b{font-family:var(--f-display);font-size:22px;font-weight:600}
+.m span{font-size:16px;color:var(--muted);line-height:1.4}
+
+.demo{flex:1;display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:center}
+.live{display:flex;align-items:center;gap:12px;font-family:var(--f-mono);font-size:16px;color:var(--err);letter-spacing:.1em;text-transform:uppercase}
+.dot{width:14px;height:14px;border-radius:50%;background:var(--err);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion: reduce){.dot{animation:none}}
+.checklist{display:flex;flex-direction:column;gap:12px}
+.checklist div{display:flex;gap:12px;align-items:baseline;font-size:19px;line-height:1.35}
+.checklist .n{font-family:var(--f-mono);font-size:14px;color:var(--muted);width:24px;flex:none}
+
+#notes{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));width:min(920px,calc(100% - 32px));
+  background:var(--ink);color:var(--stage);font-size:14px;line-height:1.5;padding:12px 16px;border-radius:6px;z-index:20;box-sizing:border-box;max-height:28vh;overflow:auto}
+#notes .tm{font-family:var(--f-mono);font-size:11px;opacity:.7;margin-bottom:4px;display:block}
+#controls{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(12px + env(safe-area-inset-top,0px));display:flex;gap:8px;z-index:20}
+#controls button{font-family:var(--f-mono);font-size:12px;background:var(--stage);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 10px;cursor:pointer;opacity:.55}
+#controls button:hover,#controls button:focus-visible{opacity:1}
+button:focus-visible{outline:2px solid var(--text-c);outline-offset:2px}
+.navzone{position:absolute;top:0;bottom:0;width:16%;z-index:4;cursor:pointer}
+.navzone.l{left:0}.navzone.r{right:0}
+
+.topic-list{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px;font-size:17px}
+.topic-list div{display:flex;gap:10px;align-items:baseline}
+.topic-list .n{font-family:var(--f-mono);color:var(--muted);width:22px;flex:none}
+.stat{font-family:var(--f-display);font-size:42px;font-weight:700;line-height:1}
+.cite{font-size:14px;color:var(--muted);font-family:var(--f-mono)}
+
+.tbl{width:100%;border-collapse:collapse;font-size:15px;line-height:1.35}
+.tbl th{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;text-align:left;padding:8px 10px;border-bottom:1px solid var(--ink)}
+.tbl td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl td.mono{font-family:var(--f-mono);font-size:13px;white-space:nowrap}
+.tag-ok,.tag-part,.tag-lim{font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.tag-ok{color:var(--voice-c)}.tag-part{color:var(--face-c)}.tag-lim{color:var(--err)}
+.schema{font-family:var(--f-mono);font-size:15px;line-height:1.7;color:var(--muted)}
+.schema b{color:var(--ink);font-weight:500}
+.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-text" viewBox="0 0 64 64"><rect x="6" y="10" width="52" height="40" rx="4" fill="none" stroke="currentColor" stroke-width="3"/><path d="M15 22h34M15 30h34M15 38h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-voice" viewBox="0 0 64 64"><path d="M8 32v0M16 24v16M24 14v36M32 20v24M40 8v48M48 22v20M56 29v6" stroke="currentColor" stroke-width="4" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-face" viewBox="0 0 64 64"><circle cx="32" cy="30" r="20" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="25" cy="27" r="2.6" fill="currentColor"/><circle cx="39" cy="27" r="2.6" fill="currentColor"/><path d="M24 37q8 6 16 0" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 58q14-8 28 0" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></symbol>
+  </defs>
+</svg>
+
+<div id="viewport">
+<div id="stage" role="region" aria-roledescription="slide deck" aria-label="Better Models, Better Humans? Progress update">
+
+<!-- 1 Title -->
+<section class="slide" data-time="0:00 – 0:40" data-notes="Good morning. Last week we introduced the question: better models, better humans? Today we do three things. First, six slides on the design. Then the materials we have built, and an honest account of what we can and cannot claim about them. Finally, the evidence base: forty-four papers on delivery, errors and detection, and the gap we are filling. The thesis is unchanged: more human-like does not automatically mean more helpful.">
+  <div class="eyebrow">Research proposal · Week update</div>
+  <div class="title-wrap">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <h1>Better models,<br>better humans?</h1>
+      <p class="lead">More human-like does not automatically mean more helpful.</p>
+      <p class="small mono">Leander Stierman · Lin Kengjian · Henri Lemahieu</p>
+    </div>
+    <div class="title-icons" aria-label="Text, then voice, then face-to-face AI">
+      <div class="ti t"><svg><use href="#i-text"/></svg><span>Text</span></div>
+      <div class="ti arrow">↓</div>
+      <div class="ti v"><svg><use href="#i-voice"/></svg><span>AI voice</span></div>
+      <div class="ti arrow">↓</div>
+      <div class="ti fc"><svg><use href="#i-face"/></svg><span>AI voice + face</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 Motivation -->
+<section class="slide" data-time="0:40 – 1:30" data-notes="AI is climbing this ladder: first chat, then voice assistants, now faces that look at you. Each step feels more natural and more trustworthy. But trust only helps if it matches how good the AI actually is. If a face makes a wrong explanation more convincing, human-likeness makes our decisions worse, not better. A concrete signal of where this is going: last month Tavus reported that in a one-minute video call, 26 out of 54 people thought their AI avatar was a real person. That is their own number, not peer-reviewed, but it shows the direction.">
+  <div class="eyebrow">Why this matters</div>
+  <h2>AI is climbing a ladder of human-likeness</h2>
+  <div class="ladder" style="flex:1">
+    <div class="rung r1 t"><svg><use href="#i-text"/></svg><h3>Text</h3><p>Read at your own pace. Easy to re-check a sentence.</p></div>
+    <div class="rung r2 v"><svg><use href="#i-voice"/></svg><h3>Voice</h3><p>Feels like a person talking. Passes once, harder to re-check.</p></div>
+    <div class="rung r3 fc"><svg><use href="#i-face"/></svg><h3>Face-to-face</h3><p>Eye contact and expression add social cues of confidence and authority.</p></div>
+  </div>
+  <p class="small">Each step feels more natural. The open question is whether it also makes people <b style="color:var(--ink)">accept errors more easily</b>. <span class="cite">Tavus Research, “Griffin”, Oct 2026: 26 of 54 people on a one-minute video call thought an AI avatar was human (self-reported).</span></p>
+</section>
+
+<!-- 3 RQ & Hypotheses -->
+<section class="slide" data-time="1:30 – 2:20" data-notes="Our question: when people learn something new from an AI, does a more human-like format make them more likely to adopt its mistakes? We expect three things. First, when the explanation is correct, delivery barely changes accuracy. Second, and this is the interesting case: when the explanation is wrong, a voice, and even more a face, makes people adopt the mistake. Third, afterwards, people in the voice and face conditions report the error less often. All tests are two-sided: if text turns out to be more misleading, that is also a finding.">
+  <div class="eyebrow">Research question</div>
+  <h2>Does a more human-like delivery help people decide better, or only make the AI more persuasive?</h2>
+  <div class="grid3">
+    <div class="hyp"><span class="tag">H1 · correct explanations</span><h4>Delivery barely changes accuracy</h4><p>When the content is right, text, voice and face should lead to similar decisions.</p></div>
+    <div class="hyp"><span class="tag">H2 · erroneous explanations</span><h4>More human-like, more errors followed</h4><p>A voice, and even more a face, makes people adopt the mistake and answer the affected question wrong.</p></div>
+    <div class="hyp"><span class="tag">H3 · error detection</span><h4>Fewer mistakes noticed</h4><p>Afterwards, people in the voice and face conditions report the error less often than people who read text.</p></div>
+  </div>
+</section>
+
+<!-- 4 Conditions + Trial -->
+<section class="slide" data-time="2:20 – 3:10" data-notes="The core control: we write one script per explanation and deliver it three ways. The words are identical; only the medium changes. Voice and face use the exact same audio file, so comparing those two isolates the effect of the face. One trial is an explanation, then three multiple-choice questions at easy, medium and hard difficulty. The order of difficulties is shuffled for every participant. Six scenarios give eighteen decisions per person.">
+  <div class="eyebrow">Independent variable · one trial</div>
+  <h2>One script, three deliveries → three decisions</h2>
+  <div class="trial" style="margin-top:8px">
+    <div class="box expl">
+      <span class="eyebrow">Explanation</span>
+      <h4>Identical words, three media</h4>
+      <div class="chips" style="margin-top:8px"><span class="chip t">text</span><span class="chip v">voice</span><span class="chip fc">voice + face</span></div>
+      <p class="small" style="margin-top:8px">Text streams at speaking speed. Voice and face use the same audio file.</p>
+    </div>
+    <div class="arrowcol">→</div>
+    <div class="qs">
+      <div class="q"><span>Decision question</span><span class="lvl">medium</span></div>
+      <div class="q"><span>Decision question</span><span class="lvl">easy</span></div>
+      <div class="q"><span>Decision question</span><span class="lvl">hard</span></div>
+      <p class="small mono" style="font-size:14px">↻ difficulty order randomized per participant</p>
+    </div>
+  </div>
+  <p class="small">Repeated for <b style="color:var(--ink)">6 scenarios → 18 decisions</b> per participant. No hint about mistakes until every decision is made.</p>
+</section>
+
+<!-- 5 Error map -->
+<section class="slide" data-time="3:10 – 4:00" data-notes="Every scenario has a correct version and an erroneous version. The error is planted so that exactly one of the three questions becomes wrong if you trust it. Across the six scenarios the error is balanced: two hit the easy question, two the medium, two the hard one. The flawed version differs from the correct one in only one sentence, said in the same confident tone. That keeps length and fluency matched.">
+  <div class="eyebrow">Manipulation · planted errors</div>
+  <h2>Each erroneous version breaks exactly one question</h2>
+  <div class="split">
+    <table class="emap" aria-label="Which question each erroneous explanation affects">
+      <thead><tr><th></th><th>Easy</th><th>Medium</th><th>Hard</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">Scenario 1</td><td class="c hit">✕</td><td class="c ok">✓</td><td class="c ok">✓</td></tr>
+        <tr><td class="lbl">Scenario 2</td><td class="c hit">✕</td><td class="c ok">✓</td><td class="c ok">✓</td></tr>
+        <tr><td class="lbl">Scenario 3</td><td class="c ok">✓</td><td class="c hit">✕</td><td class="c ok">✓</td></tr>
+        <tr><td class="lbl">Scenario 4</td><td class="c ok">✓</td><td class="c hit">✕</td><td class="c ok">✓</td></tr>
+        <tr><td class="lbl">Scenario 5</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c hit">✕</td></tr>
+        <tr><td class="lbl">Scenario 6</td><td class="c ok">✓</td><td class="c ok">✓</td><td class="c hit">✕</td></tr>
+      </tbody>
+    </table>
+    <div class="legend">
+      <div class="row"><span class="sw" style="background:var(--err-soft);border-color:var(--err)"></span><span>Question that turns wrong <b>if the participant trusts the error</b></span></div>
+      <div class="row"><span class="sw" style="background:var(--stage)"></span><span>Questions that stay answerable from the explanation</span></div>
+      <div class="row" style="margin-top:6px"><span class="mono" style="font-size:14px;color:var(--muted);width:20px;flex:none">=</span><span><b>2 × easy · 2 × medium · 2 × hard</b><br><span class="small">Minimal pair: only one sentence differs. Same confident tone.</span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 Measures -->
+<section class="slide" data-time="4:00 – 4:40" data-notes="What we compare across text, voice and face. Decision accuracy on questions the explanation supports. Error following — the main outcome — how often the affected question is answered in line with the planted mistake. Error detection from the debrief. And the interaction with difficulty: are obvious errors caught in every format, and subtle ones missed more with voice and face? We also look at calibration — does confidence match correctness — and which format people prefer.">
+  <div class="eyebrow">What we measure</div>
+  <h2>Four outcomes, compared across text, voice and face</h2>
+  <div class="mtable">
+    <div class="m"><b>Decision accuracy</b><span>Share of correct answers on questions the explanation supports.</span></div>
+    <div class="m" style="border-color:var(--err)"><b class="e">Error following</b><span>How often the affected question is answered in line with the planted mistake.</span></div>
+    <div class="m"><b>Error detection</b><span>Debrief answers: did people notice the mistake, per scenario and overall?</span></div>
+    <div class="m"><b>Difficulty × modality</b><span>Are easy errors caught in every format, and hard ones missed more with voice and face?</span></div>
+  </div>
+  <div class="chips"><span class="chip t">text</span><span class="chip v">voice</span><span class="chip fc">voice + face</span><span class="chip" style="color:var(--muted)">× easy · medium · hard</span><span class="chip" style="color:var(--muted)">+ calibration · preference</span></div>
+</section>
+
+<!-- 7 Materials -->
+<section class="slide" data-time="4:40 – 5:25" data-notes="We chose six everyday domains so the materials vary in breadth and in how much prior knowledge they need. The point is not to cover all knowledge. Every topic has one correct explanation and three minimal-pair error versions. Each error replaces one passage and changes exactly one of the three decision questions; the other two answers stay correct. Depth also varies: some errors are factual, some numerical, some causal.">
+  <div class="eyebrow">Materials</div>
+  <h2>Six domains, one controlled material structure</h2>
+  <div class="grid2" style="flex:1;align-content:center;align-items:start;gap:40px">
+    <div class="grid3" style="gap:10px">
+      <div class="hyp"><span class="tag">01</span><h4>Finance</h4><p>everyday practical</p></div>
+      <div class="hyp"><span class="tag">02</span><h4>Security</h4><p>digital safety</p></div>
+      <div class="hyp"><span class="tag">03</span><h4>Health</h4><p>public health</p></div>
+      <div class="hyp"><span class="tag">04</span><h4>Insurance</h4><p>risk literacy</p></div>
+      <div class="hyp"><span class="tag">05</span><h4>Food safety</h4><p>everyday safety</p></div>
+      <div class="hyp"><span class="tag">06</span><h4>Physics</h4><p>classic misconception</p></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:18px">
+      <div class="schema">
+        <b>correct explanation</b><br>
+        &nbsp;&nbsp;├─ error A &nbsp;→&nbsp; easy question<br>
+        &nbsp;&nbsp;├─ error B &nbsp;→&nbsp; medium question<br>
+        &nbsp;&nbsp;└─ error C &nbsp;→&nbsp; hard question
+      </div>
+      <div class="chips">
+        <span class="chip" style="border-color:var(--line);color:var(--muted)">factual detail</span>
+        <span class="chip" style="border-color:var(--line);color:var(--muted)">numerical reasoning</span>
+        <span class="chip" style="border-color:var(--line);color:var(--muted)">causal reasoning</span>
+      </div>
+      <p class="small">Each error changes one passage and exactly one answer. The other two questions remain answerable.</p>
+    </div>
+  </div>
+  <p class="small mono">6 domains × 3 difficulty levels × 3 modalities</p>
+</section>
+
+<!-- 8 Difficulty -->
+<section class="slide" data-time="5:25 – 6:10" data-notes="Difficulty is the main design risk. If every error is obvious we get a ceiling: everyone detects it and modality has no room to matter. So we aim for medium difficulty, and more importantly for diversification: different domains, different error types, a spread of item difficulty, so the result does not hang on one item. Two cautions. Human-labelled difficulty is not precise. And LLM-labelled difficulty is also inaccurate and biased — models tend to reject exactly the harder items. So labels are provisional; a human pretest is the right validation.">
+  <div class="eyebrow">Method · difficulty</div>
+  <h2>We need difficulty variance, not a single level</h2>
+  <div class="grid3" style="flex:1;align-content:center">
+    <div class="hyp" style="border-top:6px solid var(--err)"><span class="tag">Too easy</span><h4>Ceiling effect</h4><p>Everyone spots the error; no variance left for modality to explain.</p></div>
+    <div class="hyp" style="border-top:6px solid var(--voice-c)"><span class="tag">Target</span><h4>Medium difficulty</h4><p>Some errors caught, some missed; enough variance across people and items.</p></div>
+    <div class="hyp" style="border-top:6px solid var(--face-c)"><span class="tag">Also target</span><h4>Diversified items</h4><p>Different domains and error types, so no single item drives the result.</p></div>
+  </div>
+  <div class="why" style="margin-top:auto;font-size:17px">
+    <b>01</b>&nbsp; Difficulty must discriminate — but human labels are imprecise.<br>
+    <b>02</b>&nbsp; LLM-assigned difficulty is also inaccurate and biased — models reject harder items.
+  </div>
+</section>
+
+<!-- 9 Pretest -->
+<section class="slide" data-time="6:10 – 7:00" data-notes="We know a pretest is the right way to validate difficulty, and we did not run one in time. What we did instead: start from real model outputs, because a real AI error that actually misled people is worth more than a mistake we invented. We fixed the criteria before choosing: prior knowledge, where the error sits, surface plausibility. We wrote down why each item should be easy, medium or hard, and a colleague reviewed it. The labels remain provisional; a pretest is the first thing to do next.">
+  <div class="eyebrow">Method · material selection</div>
+  <h2>A pretest is needed. We did not run one.</h2>
+  <div class="checklist" style="flex:1;justify-content:center;margin-top:6px;max-width:1010px;font-size:21px;gap:16px">
+    <div><span class="n">01</span><span><b>Start from real model outputs.</b> A real AI error that actually misled people is more valuable than a mistake we invented.</span></div>
+    <div><span class="n">02</span><span><b>Fix criteria before selection:</b> prior knowledge required, position of the error, surface plausibility.</span></div>
+    <div><span class="n">03</span><span><b>Write the rationale</b> for every easy / medium / hard label, and have a colleague review it.</span></div>
+  </div>
+  <div class="why" style="margin-top:auto;font-size:16px">No time for a human pretest before this presentation. Labels rely on empirical experience and stay provisional — measured detection rates are the next step.</div>
+</section>
+
+<!-- 10 Confounds -->
+<section class="slide" data-time="7:00 – 7:40" data-notes="Three confounds remain. Domain familiarity: the same label is not the same difficulty for everyone, so we use six domains and randomise order. Surface fluency: style can drive detection more than content, so correct and error versions are minimal pairs. Error type: a factual slip and a reasoning flaw are not the same task, so we label them separately and never pool them under one difficulty level. Search and calculators are excluded by instruction.">
+  <div class="eyebrow">Confounds</div>
+  <h2>Three confounds, and what we do about them</h2>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px">
+  <table class="tbl">
+    <thead><tr><th style="width:22%">Confound</th><th style="width:36%">Why it matters</th><th style="width:42%">What we do</th></tr></thead>
+    <tbody>
+      <tr><td><b>Domain familiarity</b></td><td>Same label is not same difficulty across people</td><td>Six domains; order randomised per participant</td></tr>
+      <tr><td><b>Surface fluency</b></td><td>Style can drive detection more than content</td><td>Minimal pairs: wording, length and tone held constant</td></tr>
+      <tr><td><b>Error type</b></td><td>Fact, number and reasoning errors are not interchangeable</td><td>Separate labels; never pooled under one difficulty level</td></tr>
+    </tbody>
+  </table>
+  <p class="small">Search and calculators are excluded by instruction.</p>
+  </div>
+</section>
+
+<!-- 11 Quality confound -->
+<section class="slide" data-time="7:40 – 8:20" data-notes="Generative video and speech vary in quality even with the same prompt and model. That is not just noise. A polished clip is trusted more and checked less, so quality can lower detection for the wrong reason. And if our hard-error clips happen to look worse, difficulty and quality are confounded: we would see lower detection and wrongly credit difficulty. People are also poor at detecting synthetic media, so they will not consciously discount quality differences. We cannot fully control this in the time we have; we report it as a limitation.">
+  <div class="eyebrow">Stimulus quality</div>
+  <h2>Quality is a confound, not just noise</h2>
+  <div class="grid3" style="flex:1;align-content:center">
+    <div class="hyp"><h4>Structural variance</h4><p>Same prompt, different seeds: flicker, lip-sync, naturalness. Generation quality is not constant.</p></div>
+    <div class="hyp"><h4>Directional bias</h4><p>Polish raises credibility and lowers vigilance. Detection can drop for the wrong reason.</p></div>
+    <div class="hyp"><h4>Fixed-effect fallacy</h4><p>If hard items get worse clips, difficulty and quality are confounded. Materials are not fixed.</p></div>
+  </div>
+  <div class="why">People are poor at detecting synthetic media, so they will not consciously discount quality differences.</div>
+</section>
+
+<!-- 12 Minimum viable QC -->
+<section class="slide" data-time="8:20 – 9:00" data-notes="We cannot run a full quality pipeline in the time we have, so we do the minimum and say what is missing. We log every generation, generate best-of-three where possible, do one quick check on clarity, audio and lip-sync, keep correct and error versions visually similar, and record how many takes were rejected. We do not claim a second rater, an agreement score, full quality matching, or a quality check with participants. Quality stays a limitation.">
+  <div class="eyebrow">Quality control</div>
+  <h2>Minimum viable quality control</h2>
+  <div class="grid2" style="flex:1;align-content:center;align-items:start;gap:40px">
+    <div>
+      <p class="small mono" style="margin-bottom:8px">WE WILL</p>
+      <div class="checklist">
+        <div><span class="n">✓</span><span>Log model, seed, prompt and settings.</span></div>
+        <div><span class="n">✓</span><span>Best-of-3 where possible.</span></div>
+        <div><span class="n">✓</span><span>One quick check: clarity, audio, lip-sync.</span></div>
+        <div><span class="n">✓</span><span>Keep correct and error versions visually similar.</span></div>
+        <div><span class="n">✓</span><span>Record how many takes were rejected.</span></div>
+      </div>
+    </div>
+    <div>
+      <p class="small mono" style="margin-bottom:8px;color:var(--err)">WE WILL NOT CLAIM</p>
+      <div class="checklist" style="opacity:.8">
+        <div><span class="n">✕</span><span>A second rater or an agreement score.</span></div>
+        <div><span class="n">✕</span><span>Full quality matching across conditions.</span></div>
+        <div><span class="n">✕</span><span>A formal quality check with participants.</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="small">Quality may still co-vary with difficulty. We report generation and rejection patterns, and treat it as a limitation.</p>
+</section>
+
+<!-- 13 Status -->
+<section class="slide" data-time="9:00 – 9:45" data-notes="Where are we? The materials are built: six topics, correct plus three error versions each, three questions per topic, minimal pairs, and a separate demo case. The survey instrument is drafted. What is not done: a formal difficulty calibration, pilot detection data, quality matching for video and audio, and of course the main data. The honest next step is a small pilot if time permits; otherwise difficulty and quality stay explicit limitations.">
+  <div class="eyebrow">Status</div>
+  <h2>Materials and survey are ready; pilot data are not</h2>
+  <div class="grid2" style="flex:1;align-content:center;align-items:start;gap:36px">
+    <div>
+      <p class="small mono" style="margin-bottom:8px">DONE</p>
+      <div class="checklist">
+        <div><span class="n">✓</span><span>6 topics × correct + 3 error versions</span></div>
+        <div><span class="n">✓</span><span>3 decision questions per topic (easy / medium / hard)</span></div>
+        <div><span class="n">✓</span><span>Survey instrument drafted</span></div>
+        <div><span class="n">✓</span><span>Minimal-pair structure in place</span></div>
+        <div><span class="n">✓</span><span>Demo case prepared separately</span></div>
+      </div>
+    </div>
+    <div>
+      <p class="small mono" style="margin-bottom:8px;color:var(--err)">NOT DONE</p>
+      <div class="checklist" style="opacity:.8">
+        <div><span class="n">✕</span><span>Formal human difficulty calibration</span></div>
+        <div><span class="n">✕</span><span>Pilot detection-rate data</span></div>
+        <div><span class="n">✕</span><span>Quality matching for video / audio</span></div>
+        <div><span class="n">✕</span><span>Main-study data collection</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="small"><b>Next:</b> a small pilot if time permits; otherwise difficulty and quality stay explicit limitations.</p>
+</section>
+
+<!-- 14 Evidence 1 -->
+<section class="slide" data-time="9:45 – 10:45" data-notes="Before the numbers, the three hypotheses. H1 is about correct content: when the explanation is right, do text, voice and face lead to similar decisions? H2 is about wrong content: when the explanation is wrong, does a voice or a face make people follow it more? H3 is about detection: afterwards, do people in voice and face conditions report the error less often? Now the table. Thirteen papers address H1, thirty address H2, twenty address H3. But when you ask which way the result points, it is four against zero, zero against two, and zero against zero. And the last row is the one that matters: no paper runs the same script in text, voice and face.">
+  <div class="eyebrow">Literature · 44 papers screened</div>
+  <h2>What the 44 papers actually test</h2>
+  <div class="grid3" style="gap:10px;margin-top:2px">
+    <div class="hyp"><span class="tag">H1 · correct content</span><h4>Same accuracy?</h4><p>When the content is right, do text, voice and face lead to similar decisions?</p></div>
+    <div class="hyp"><span class="tag">H2 · wrong content</span><h4>More following?</h4><p>When the content is wrong, does voice — and even more a face — make people follow it?</p></div>
+    <div class="hyp"><span class="tag">H3 · detection</span><h4>Fewer noticed?</h4><p>Afterwards, do voice and face users report the error less often than text users?</p></div>
+  </div>
+  <table class="emap" style="width:100%;margin-top:6px">
+    <thead><tr><th></th><th>H1 · correct</th><th>H2 · wrong</th><th>H3 · noticed</th></tr></thead>
+    <tbody>
+      <tr><td class="lbl">Papers addressing it</td><td class="c">13</td><td class="c">30</td><td class="c">20</td></tr>
+      <tr><td class="lbl">For : against</td><td class="c"><b>4 : 0</b></td><td class="c"><b>0 : 2</b></td><td class="c"><b>0 : 0</b></td></tr>
+      <tr><td class="lbl">No clear direction / mechanism</td><td class="c">4</td><td class="c">2</td><td class="c">20</td></tr>
+      <tr><td class="lbl">Same script, three media</td><td class="c hit">0</td><td class="c hit">0</td><td class="c hit">0</td></tr>
+    </tbody>
+  </table>
+  <p class="small">“For / against” = the result points with / against the hypothesis. “No clear direction / mechanism” = the outcome is measured without varying delivery, only mechanism evidence, or the paper points both ways. Last row = our design.</p>
+</section>
+
+<!-- 15 Evidence 2 -->
+<section class="slide" data-time="10:45 – 11:50" data-notes="Two studies show what those numbers mean. Study one: Shaw and Nave gave 1,372 people CRT-style questions in a text chat, and on some trials the AI was right and on others wrong. People could override it. They followed the wrong AI in 79.8% of faulty trials, overrode only 20.2%, and their confidence went up rather than down. That is the baseline: text alone already produces massive error following. Study two: Puppart and Aru gave 36 students eight questions, with half of ChatGPT's advice wrong. 52.1% of the wrong advice was adopted, and a short AI-literacy text did not help. So the problem is not lack of knowledge. The lesson: the phenomenon is strong, but all of this is text. Whether a voice or a face makes it worse is exactly what nobody has tested with the same script. So the direction points our way; the evidence is not yet strong enough to carry the design.">
+  <div class="eyebrow">Literature · what the numbers mean</div>
+  <h2>Two studies, one lesson</h2>
+  <div class="grid2" style="flex:1;align-content:center;align-items:stretch;gap:28px">
+    <div class="hyp" style="gap:10px">
+      <span class="tag">Study 1 · text chat</span>
+      <h4 style="font-size:30px">79.8% follow the wrong AI</h4>
+      <p><b>Situation:</b> 1,372 participants answer CRT-style questions in a text chat.<br>
+      <b>Task:</b> Decide whether to follow the AI's answer.<br>
+      <b>Action:</b> The AI is right on some trials, wrong on others; answers can be overridden.<br>
+      <b>Result:</b> 79.8% follow the wrong AI; only 20.2% override; confidence rises 11.7 points.</p>
+      <span class="cite">Shaw &amp; Nave 2026 · N=1,372</span>
+    </div>
+    <div class="hyp" style="gap:10px">
+      <span class="tag">Study 2 · students</span>
+      <h4 style="font-size:30px">52.1% adopt wrong advice</h4>
+      <p><b>Situation:</b> 36 students answer eight questions with ChatGPT's advice.<br>
+      <b>Task:</b> Decide whether to adopt or reject the advice.<br>
+      <b>Action:</b> Half of the advice is wrong; half the students read a short AI-literacy text.<br>
+      <b>Result:</b> 52.1% of wrong advice is adopted; the literacy text does not help (d=−0.25).</p>
+      <span class="cite">Puppart &amp; Aru 2025 · N=36</span>
+    </div>
+  </div>
+  <div class="why">Text alone already produces high error following. The open question is whether voice and face make it worse — and no study tests that with the same script.</div>
+</section>
+
+<!-- 16 Gap -->
+<section class="slide" data-time="11:50 – 12:20" data-notes="The gap is specific and it has three parts. No study fixes the same script across text, voice and face. No study plants one error that changes exactly one decision. And no study measures whether people actually follow that error in a behavioural decision. The corpus is forty-four full texts, arXiv versions, screened for any delivery or modality manipulation. It is not a systematic review, and we say so.">
+  <div class="eyebrow">The gap</div>
+  <h2>No study holds the words fixed and varies only the medium</h2>
+  <div class="grid2" style="flex:1;align-content:center;align-items:start;gap:40px">
+    <div class="qlist" style="margin-top:6px">
+      <div class="qitem"><span class="k">script</span><span>No study fixes the <b>same explanation</b> across text, voice and face.</span></div>
+      <div class="qitem"><span class="k">error</span><span>No study plants <b>one error</b> that changes exactly one decision.</span></div>
+      <div class="qitem"><span class="k">behaviour</span><span>No study measures whether people <b>follow it</b> in a decision.</span></div>
+    </div>
+    <div class="hyp" style="align-self:start">
+      <span class="tag">What we do instead</span>
+      <div class="chips" style="margin-top:8px;margin-bottom:8px">
+        <span class="chip t">text</span><span class="chip v">voice</span><span class="chip fc">voice + face</span>
+      </div>
+      <p>One script. One planted error. Three decision questions. A behavioural outcome.</p>
+    </div>
+  </div>
+  <div class="why" style="margin-top:auto">
+    <b>Corpus:</b> 44 full texts, arXiv versions, 2019–2026, screened for any delivery or
+    modality manipulation. Not a systematic review; one coder; no meta-analysis.
+  </div>
+</section>
+
+<!-- 17 Future interaction -->
+<section class="slide" data-time="12:20 – 13:10" data-notes="Looking further ahead, the current design is one-shot: the AI explains, the person decides. Real systems let people ask follow-up questions, and future ones may answer in voice or on screen. Interaction could cut both ways. It might help people catch errors by probing. Or it might amplify persuasion through conversational scaffolding and social presence. We do not yet know which.">
+  <div class="eyebrow">Future work</div>
+  <h2>From one-shot delivery to interaction</h2>
+  <div class="grid2">
+    <div class="hyp" style="border-top:6px solid var(--text-c)"><h4>Current design</h4><p>AI delivers a fixed explanation. User cannot ask follow-ups. No real-time video responses.</p></div>
+    <div class="hyp" style="border-top:6px solid var(--face-c)"><h4>Interactive future</h4><p>Users can probe, ask clarifying questions, and receive spoken or on-screen answers.</p></div>
+  </div>
+  <p class="small">Open question: does the ability to follow up reduce error following, or does conversational scaffolding make the AI even more persuasive?</p>
+</section>
+
+<!-- 18 Open questions -->
+<section class="slide" data-time="13:10 – 13:50" data-notes="Concrete open questions for the interaction direction. Does letting people ask clarifying questions reduce the rate at which they adopt mistakes? Does replaying the audio, or only being able to hear it once, change detection? And how do we measure the quality of the interaction itself as a factor, not just the final decision? These are the natural next experiments once the one-shot design has been run.">
+  <div class="eyebrow">Open questions for interaction</div>
+  <h2>Three things we want to test next</h2>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:24px"><div class="qlist">
+    <div class="qitem"><span class="k">probe</span><span>Does the ability to ask follow-up questions reduce error following?</span></div>
+    <div class="qitem"><span class="k">replay</span><span>Does replaying the audio, or only hearing it once, change detection?</span></div>
+    <div class="qitem"><span class="k">quality</span><span>How do we measure interaction quality itself as a factor?</span></div>
+  </div>
+  <div class="why">These become the natural next experiments once the one-shot design has been run.</div></div>
+</section>
+
+<!-- 19 Close -->
+<section class="slide" data-time="13:50 – 14:30" data-notes="To wrap up: AI is getting a voice and a face, fast. We want to find out whether that makes it more helpful, or just more convincing. If it is the second, the people designing these interfaces, and anyone teaching people how to use AI, need to know. We have the materials and a clear statement of what is still unvalidated — difficulty labels and production quality. The next step is a small pilot if time permits. Thank you. We are happy to take your questions.">
+  <div class="eyebrow">Thank you</div>
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:24px">
+    <h1 style="font-size:76px">Better models,<br>better humans?</h1>
+    <p class="lead">We will find out whether a face makes an AI more helpful, or just more convincing.</p>
+    <p class="small mono">Leander Stierman · Lin Kengjian · Henri Lemahieu</p>
+  </div>
+  <p class="small mono" style="font-size:16px">Questions?</p>
+</section>
+
+<div class="navzone l" data-dir="-1" aria-hidden="true"></div>
+<div class="navzone r" data-dir="1" aria-hidden="true"></div>
+<div id="chrome"><span>Better models, better humans?</span><span id="count">1 / 19</span></div>
+<div id="progress"></div>
+</div>
+</div>
+
+<div id="controls">
+  <button id="btn-prev" type="button" aria-label="Previous slide">←</button>
+  <button id="btn-next" type="button" aria-label="Next slide">→</button>
+  <button id="btn-notes" type="button">Notes (N)</button>
+  <button id="btn-fs" type="button">Fullscreen (F)</button>
+</div>
+<div id="notes" hidden><span class="tm" id="notes-time"></span><span id="notes-text"></span></div>
+
+<script>
+(function(){
+  const stage=document.getElementById('stage');
+  const slides=[...document.querySelectorAll('.slide')];
+  const count=document.getElementById('count'),prog=document.getElementById('progress');
+  const notes=document.getElementById('notes'),nTime=document.getElementById('notes-time'),nText=document.getElementById('notes-text');
+  let i=0;
+  const h=parseInt((location.hash||'').replace('#s',''),10);
+  if(h>=1&&h<=slides.length)i=h-1;
+  function fit(){
+    const vp=document.getElementById('viewport');
+    const s=Math.min(vp.clientWidth/1280,vp.clientHeight/720);
+    stage.style.transform='translate(-50%,-50%) scale('+s+')';
+  }
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>{s.classList.toggle('active',k===i);s.setAttribute('aria-hidden',k===i?'false':'true')});
+    count.textContent=(i+1)+' / '+slides.length;
+    prog.style.width=((i+1)/slides.length*100)+'%';
+    nTime.textContent='Slide '+(i+1)+' · '+(slides[i].dataset.time||'');
+    nText.textContent=slides[i].dataset.notes||'';
+  }
+  function toggleNotes(){notes.hidden=!notes.hidden}
+  function fs(){try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}}
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();show(i+1)}
+    else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();show(i-1)}
+    else if(e.key==='Home')show(0);
+    else if(e.key==='End')show(slides.length-1);
+    else if(e.key==='n'||e.key==='N')toggleNotes();
+    else if(e.key==='f'||e.key==='F')fs();
+  });
+  document.querySelectorAll('.navzone').forEach(z=>z.addEventListener('click',()=>show(i+(+z.dataset.dir))));
+  document.getElementById('btn-prev').onclick=()=>show(i-1);
+  document.getElementById('btn-next').onclick=()=>show(i+1);
+  document.getElementById('btn-notes').onclick=toggleNotes;
+  document.getElementById('btn-fs').onclick=fs;
+  let tx=null;
+  stage.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+  stage.addEventListener('touchend',e=>{if(tx===null)return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>40)show(i+(d<0?1:-1));tx=null});
+  window.addEventListener('resize',fit);
+  fit();show(i);
+})();
+</script>
+
+</body>
+</html>
